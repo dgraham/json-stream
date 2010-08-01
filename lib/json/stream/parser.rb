@@ -9,32 +9,33 @@ module JSON
     # state changes. Use the json gem for small documents. Use this
     # for huge documents that won't fit in memory.
     class Parser
-      BUF_SIZE = 512
-      CONTROL = /[[:cntrl:]]/
-      WS = /\s/
-      HEX = /[0-9a-fA-F]/
-      DIGIT = /[0-9]/
-      DIGIT_1_9 = /[1-9]/
-      DIGIT_END = /\d$/
-      TRUE_RE = /[rue]/
-      FALSE_RE = /[alse]/
-      NULL_RE = /[ul]/
-      TRUE_KEYWORD = 'true'
+      BUF_SIZE      = 512
+      CONTROL       = /[[:cntrl:]]/
+      WS            = /\s/
+      HEX           = /[0-9a-fA-F]/
+      DIGIT         = /[0-9]/
+      DIGIT_1_9     = /[1-9]/
+      DIGIT_END     = /\d$/
+      TRUE_RE       = /[rue]/
+      FALSE_RE      = /[alse]/
+      NULL_RE       = /[ul]/
+      TRUE_KEYWORD  = 'true'
       FALSE_KEYWORD = 'false'
-      NULL_KEYWORD = 'null'
-      LEFT_BRACE = '{'
-      RIGHT_BRACE = '}'
-      LEFT_BRACKET = '['
+      NULL_KEYWORD  = 'null'
+      LEFT_BRACE    = '{'
+      RIGHT_BRACE   = '}'
+      LEFT_BRACKET  = '['
       RIGHT_BRACKET = ']'
-      BACKSLASH = '\\'
-      SLASH = '/'
-      QUOTE = '"'
-      COMMA = ','
-      COLON = ':'
-      ZERO = '0'
-      MINUS = '-'
-      POINT = '.'
-      EXPONENT = /[eE]/
+      BACKSLASH     = '\\'
+      SLASH         = '/'
+      QUOTE         = '"'
+      COMMA         = ','
+      COLON         = ':'
+      ZERO          = '0'
+      MINUS         = '-'
+      PLUS          = '+'
+      POINT         = '.'
+      EXPONENT      = /[eE]/
 
       # Parses a full JSON document from a String or an IO stream and returns
       # the parsed object graph. For parsing small JSON documents with small
@@ -214,7 +215,7 @@ module JSON
             end
           when :start_exponent
             case ch
-            when '-', '+', DIGIT
+            when MINUS, PLUS, DIGIT
               @state = :in_exponent
               @buf << ch
             else
