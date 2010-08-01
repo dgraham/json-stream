@@ -75,7 +75,7 @@ module JSON
       #   end_document   { puts "end document" }
       #   start_object   { puts "start object" }
       #   end_object     { puts "end object" }
-      #   start_array    { puts "start array" "
+      #   start_array    { puts "start array" }
       #   end_array      { puts "end array" }
       #   key            {|k| puts "key: #{k}" }
       #   value          {|v| puts "value: #{v}" }
