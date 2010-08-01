@@ -38,20 +38,21 @@ receive_data loop is where JSON::Stream is really useful.  Inside our
 EventMachine::Connection subclass we might have:
 
 def post_init
-  @p = JSON::Stream::Parser.new
-  @p.start_document { puts "start document" }
-  @p.end_document   { puts "end document" }
-  @p.start_object   { puts "start object" }
-  @p.end_object     { puts "end object" }
-  @p.start_array    { puts "start array" "
-  @p.end_array      { puts "end array" }
-  @p.key            {|key| puts "key: #{key}" }
-  @p.value          {|value| puts "value: #{value}" }
+  @parser = JSON::Stream::Parser.new do
+    start_document { puts "start document" }
+    end_document   { puts "end document" }
+    start_object   { puts "start object" }
+    end_object     { puts "end object" }
+    start_array    { puts "start array" "
+    end_array      { puts "end array" }
+    key            {|k| puts "key: #{k}" }
+    value          {|v| puts "value: #{v}" }
+  end
 end
 
 def receive_data(data)
   begin
-    @p << data
+    @parser << data
   rescue JSON::Stream::ParserError => e
     close_connection
   end

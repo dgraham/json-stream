@@ -316,12 +316,6 @@ class ParserTest < Test::Unit::TestCase
     assert_equal(expected, events('{"key 1" : 12,}'))
   end
 
-  def test_parse
-    json = "[1,2,3]"
-    obj = JSON::Stream::Parser.parse(json)
-    assert_equal([1,2,3], obj)
-  end
-
   def test_single_byte_utf8
     expected = [:start_document, :start_array, [:value, "test"], :end_array, :end_document]
     assert_equal(expected, events('["test"]'))
@@ -378,6 +372,27 @@ class ParserTest < Test::Unit::TestCase
 
     expected = [:start_document, :start_array, [:value, "\u{10102}"], :end_array, :end_document]
     assert_equal(expected, events("[\"\xF0\x90\x84\x82\"]"))
+  end
+
+  def test_parse
+    json = "[1,2,3]"
+    obj = JSON::Stream::Parser.parse(json)
+    assert_equal([1,2,3], obj)
+  end
+
+  def test_initializer_block
+    events = []
+    parser = JSON::Stream::Parser.new do
+      start_document { events << :start_document }
+      end_document   { events << :end_document }
+      start_object   { events << :start_object }
+      end_object     { events << :end_object }
+      key            {|k| events << [:key, k] }
+      value          {|v| events << [:value, v] }
+    end
+    parser << '{"key":12}'
+    expected = [:start_document, :start_object, [:key, "key"], [:value, 12], :end_object, :end_document]
+    assert_equal(expected, events)
   end
 
   private

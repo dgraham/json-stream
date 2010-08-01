@@ -68,11 +68,24 @@ module JSON
         private "notify_#{name}"
       end
 
-      def initialize
+      # Create a new parser with an optional initialization block where
+      # we can register event callbacks. For example:
+      # parser = JSON::Stream::Parser.new do
+      #   start_document { puts "start document" }
+      #   end_document   { puts "end document" }
+      #   start_object   { puts "start object" }
+      #   end_object     { puts "end object" }
+      #   start_array    { puts "start array" "
+      #   end_array      { puts "end array" }
+      #   key            {|k| puts "key: #{k}" }
+      #   value          {|v| puts "value: #{v}" }
+      # end
+      def initialize(&block)
         @state = :start_document
         @utf8 = Buffer.new
         @listeners = Hash.new {|h, k| h[k] = [] }
         @stack, @unicode, @buf, @pos = [], "", "", -1
+        instance_eval(&block) if block_given?
       end
 
       # Pass data into the parser to advance the state machine and
