@@ -14,6 +14,21 @@ class BufferTest < Test::Unit::TestCase
     assert_equal("\u0000abc", @buf << "\u0000abc")
   end
 
+  # The é character can be a single codepoint \u00e9 or two codepoints
+  # \u0065\u0301. The first is encoded in 2 bytes, the second in 3 bytes.
+  # The json and yajl-ruby gems and CouchDB do not normalize unicode text
+  # so neither will we. Although, a good way to normalize is by calling
+  # ActiveSupport::Multibyte::Chars.new("é").normalize(:c).
+  def test_combined_chars
+    assert_equal("\u0065\u0301", @buf << "\u0065\u0301")
+    assert_equal(3, (@buf << "\u0065\u0301").bytesize)
+    assert_equal(2, (@buf << "\u0065\u0301").size)
+
+    assert_equal("\u00e9", @buf << "\u00e9")
+    assert_equal(2, (@buf << "\u00e9").bytesize)
+    assert_equal(1, (@buf << "\u00e9").size)
+  end
+
   def test_valid_two_byte_chars
     assert_equal("abcé", @buf << "abcé")
     assert_equal("a", @buf << "a\xC3")
