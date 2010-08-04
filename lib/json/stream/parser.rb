@@ -36,6 +36,7 @@ module JSON
       PLUS          = '+'
       POINT         = '.'
       EXPONENT      = /[eE]/
+      B,F,N,R,T,U   = %w[b f n r t u]
 
       # Parses a full JSON document from a String or an IO stream and returns
       # the parsed object graph. For parsing small JSON documents with small
@@ -147,22 +148,22 @@ module JSON
             when QUOTE, BACKSLASH, SLASH
               @buf << ch
               @state = :start_string
-            when 'b'
+            when B
               @buf << "\b"
               @state = :start_string
-            when 'f'
+            when F
               @buf << "\f"
               @state = :start_string
-            when 'n'
+            when N
               @buf << "\n"
               @state = :start_string
-            when 'r'
+            when R
               @buf << "\r"
               @state = :start_string
-            when 't'
+            when T
               @buf << "\t"
               @state = :start_string
-            when 'u'
+            when U
               @state = :unicode_escape
             else
               error("Expected escaped character")
@@ -172,11 +173,38 @@ module JSON
             when HEX
               @unicode << ch
               if @unicode.size == 4
-                @buf << @unicode.slice!(0, 4).hex
-                @state = :start_string
+                codepoint = @unicode.slice!(0, 4).hex
+                if codepoint >= 0xD800 && codepoint <= 0xDBFF
+                  error('Expected low surrogate pair half') if @stack[-1].is_a?(Fixnum)
+                  @state = :start_surrogate_pair
+                  @stack.push(codepoint)
+                elsif codepoint >= 0xDC00 && codepoint <= 0xDFFF
+                  high = @stack.pop
+                  error('Expected high surrogate pair half') unless high.is_a?(Fixnum)
+                  pair = ((high - 0xD800) * 0x400) + (codepoint - 0xDC00) + 0x10000
+                  @buf << pair
+                  @state = :start_string
+                else
+                  @buf << codepoint
+                  @state = :start_string
+                end
               end
             else
               error('Expected unicode escape hex digit')
+            end
+          when :start_surrogate_pair
+            case ch
+            when BACKSLASH 
+              @state = :start_surrogate_pair_u
+            else
+              error('Expected low surrogate pair half')
+            end
+          when :start_surrogate_pair_u
+            case ch
+            when U
+              @state = :unicode_escape
+            else
+              error('Expected low surrogate pair half')
             end
           when :start_negative_number
             case ch
@@ -368,13 +396,13 @@ module JSON
         when QUOTE
           @state = :start_string
           @stack.push(:string)
-        when 't'
+        when T
           @state = :start_true
           @buf << ch
-        when 'f'
+        when F
           @state = :start_false
           @buf << ch
-        when 'n'
+        when N
           @state = :start_null
           @buf << ch
         when MINUS

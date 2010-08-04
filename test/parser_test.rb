@@ -241,6 +241,18 @@ class ParserTest < Test::Unit::TestCase
     assert_equal(expected, events(%q{ {"snow\\u26033 man": 1} }))
   end
 
+  def test_unicode_escape_surrogate_pairs
+    expected = [:start_document, :start_array, :error]
+    assert_equal(expected, events(%q{ ["\uD834"] }))
+    assert_equal(expected, events(%q{ ["\uD834\uD834"] }))
+    assert_equal(expected, events(%q{ ["\uDD1E"] }))
+    assert_equal(expected, events(%q{ ["\uDD1E\uDD1E"] }))
+
+    expected = [:start_document, :start_object, [:key, "\u{1D11E}"],
+               [:value, "g\u{1D11E}clef"], :end_object, :end_document]
+    assert_equal(expected, events(%q{ {"\uD834\uDD1E": "g\uD834\uDD1Eclef"} }))
+  end
+
   def test_array_trailing_comma
     expected = [:start_document, :start_array, [:value, 12], :error]
     assert_equal(expected, events('[12, ]'))
