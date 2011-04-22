@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/gempackagetask'
 require 'rake/testtask'
-require_relative 'lib/json/stream'
+require_relative 'lib/json/stream/version'
 
 spec = Gem::Specification.new do |s|
   s.name = "json-stream"
