@@ -1,71 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='utf-8'>
-  <title>JSON::Stream for Ruby @ GitHub</title>
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #f8f8f8;
-      font-family: "Helvetica Neue", Helvetica, Arial, FreeSans, san-serif;
-      color: #444;
-    }
-    #container {
-      margin: 0 auto;
-      width: 600px;
-    }
-    h1 { font-size: 3.5em; color: #070707; margin-bottom: 3px; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #070707; margin-bottom: 3px; }
-    h3 { text-align: center; color: #070707; }
-    p {
-      font-size: 11pt;
-      line-height: 150%;
-    }
-    a { color: #070707; }
-    a img { border: none; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #222; color: #fff; padding: 15px;border: 2px solid #fff;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { font-size: 11pt; text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+---
+layout: site
+title: JSON::Stream for Ruby @ GitHub
+---
+<h1><a href="https://github.com/dgraham/json-stream">JSON::Stream for Ruby</a></h1>
 
-<body>
-  <a href="https://github.com/dgraham/json-stream"><img style="position: absolute; top: 0; right: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+<div class="description">
+  A streaming JSON parser that generates SAX-like events.
+</div>
 
-  <div id="container">
-
-    <div class="download">
-      <a href="https://github.com/dgraham/json-stream/zipball/master">
-        <img width="90" src="https://github.com/images/modules/download/zip.png"/></a>
-      <a href="https://github.com/dgraham/json-stream/tarball/master">
-        <img width="90" src="https://github.com/images/modules/download/tar.png"/></a>
-    </div>
-
-    <h1><a href="https://github.com/dgraham/json-stream">JSON::Stream for Ruby</a></h1>
-
-    <div class="description">
-      A streaming JSON parser that generates SAX-like events.
-    </div>
-
-    <p>JSON::Stream is a finite state machine based JSON parser that generates events
+<p>
+JSON::Stream is a finite state machine based JSON parser that generates events
 for each state change. This allows us to stream both the JSON document into
-memory and the parsed object graph out of memory to some other process.  This
-is much like an XML SAX parser that generates events during parsing.  There is
-no requirement for the document nor the object graph to be fully buffered in
-memory.  This is best suited for huge JSON documents that won't fit in memory.
-For example, streaming and processing large map/reduce views from Apache CouchDB.</p>
+memory and the parsed object graph out of memory to some other process. This
+is much like an XML SAX parser that generates events during parsing.
+</p>
+<p>
+There is no requirement for the document nor the object graph to be fully buffered in
+memory. This is best suited for huge JSON documents that won't fit in memory.
+For example, streaming and processing large map/reduce views from Apache CouchDB.
+</p>
+
 <h2>Dependencies</h2>
-<p>JSON::Stream is a pure-Ruby library that depends on no external libraries. It will
-run on Ruby 1.9.1 or better, including JRuby.</p>
+<p>
+JSON::Stream is a pure Ruby library that depends on no external libraries. It will
+run on Ruby 1.9.1 or better, including JRuby.
+</p>
+
 <h2>Install</h2>
 <pre>$ gem install json-stream</pre>
+
 <h2>Usage</h2>
 <p>
 The simplest way to parse is to read the full JSON document into memory
-and then parse it into a full object graph.  This is fine for small documents
+and then parse it into a full object graph. This is fine for small documents
 because we have room for both the document and parsed object in memory.
 </p>
 <pre>
@@ -132,30 +99,29 @@ imagine the callbacks looking for an array named "rows" and processing sets
 of these row objects in small batches.  We can process millions of rows streaming
 over the network in constant memory space this way.
 </p>
+
 <h2>Authors</h2>
 <p>David Graham (david.malcom.graham@gmail.com)</p>
+
 <h2>License</h2>
 <p>
-This software is available under the terms of the
+JSON::Stream is open source software released under the terms of the 
 <a href="https://github.com/dgraham/json-stream/blob/master/LICENSE">MIT license</a>.
+If you have improvements to the code you'd like to share, send us a
+<a href="http://help.github.com/pull-requests/">GitHub pull request</a>
+with the changes and unit tests.
 </p>
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/dgraham/json-stream/zipball/master">zip</a> or
-      <a href="https://github.com/dgraham/json-stream/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-    </p>
-    <pre>$ git clone git://github.com/dgraham/json-stream</pre>
+<h2>Download</h2>
+<p>
+  You can download this project in either
+  <a href="https://github.com/dgraham/json-stream/zipball/master">zip</a> or
+  <a href="https://github.com/dgraham/json-stream/tarball/master">tar</a> formats.
+  You can also clone the project with <a href="http://git-scm.com">Git</a> by running:
+</p>
+<pre>$ git clone git://github.com/dgraham/json-stream</pre>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/dgraham/json-stream">dgraham/json-stream</a>
-    </div>
+<p id="footer">
+  get the source code on GitHub : <a href="https://github.com/dgraham/json-stream">dgraham/json-stream</a>
+</p>
 
-  </div>
-
-</body>
-</html>
