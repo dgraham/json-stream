@@ -71,7 +71,7 @@ over the network in constant memory space this way.
 
 == Dependencies
 
-* ruby >= 1.9.1
+* ruby >= 1.9.2
 
 == Contact
 

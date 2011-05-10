@@ -27,7 +27,7 @@ For example, streaming and processing large map/reduce views from Apache CouchDB
   s.require_path = "lib"
 
   s.add_development_dependency "rake"
-  s.required_ruby_version = '>= 1.9.1'
+  s.required_ruby_version = '>= 1.9.2'
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|
