@@ -58,6 +58,5 @@ module JSON
         raise ParserError, message
       end
     end
-
   end
 end

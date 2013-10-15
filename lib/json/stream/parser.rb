@@ -2,7 +2,6 @@
 
 module JSON
   module Stream
-
     class ParserError < RuntimeError; end
 
     # A streaming JSON parser that generates SAX-like events for
@@ -194,7 +193,7 @@ module JSON
             end
           when :start_surrogate_pair
             case ch
-            when BACKSLASH 
+            when BACKSLASH
               @state = :start_surrogate_pair_u
             else
               error('Expected low surrogate pair half')
@@ -425,6 +424,5 @@ module JSON
         raise ParserError, "#{message}: char #{@pos}"
       end
     end
-
   end
 end

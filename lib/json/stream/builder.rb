@@ -82,11 +82,10 @@ module JSON
           @obj[@key] = node
           @key = nil
         else
-          @key = node 
+          @key = node
         end
         self
       end
     end
-
   end
 end
