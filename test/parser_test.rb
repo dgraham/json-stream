@@ -220,6 +220,9 @@ class ParserTest < Test::Unit::TestCase
 
     expected = [:start_document, :start_object, :error]
     assert_equal(expected, events("{\" \u0000 \":12}"))
+
+    expected = [:start_document, :start_array, [:value, " \u007F "], :end_array, :end_document]
+    assert_equal(expected, events("[\" \u007f \"]"))
   end
 
   def test_unicode_escape
@@ -447,5 +450,4 @@ class ParserTest < Test::Unit::TestCase
       @events << :error
     end
   end
-
 end
