@@ -9,7 +9,7 @@ module JSON
     # for huge documents that won't fit in memory.
     class Parser
       BUF_SIZE      = 512
-      CONTROL       = /[[:cntrl:]]/
+      CONTROL       = /[\x00-\x1F]/
       WS            = /\s/
       HEX           = /[0-9a-fA-F]/
       DIGIT         = /[0-9]/
