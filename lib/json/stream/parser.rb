@@ -345,7 +345,22 @@ module JSON
               start_value(ch)
             end
           when :end_document
-            error("Unexpected data") unless ch =~ WS
+            case ch
+            when LEFT_BRACE
+              @state = :start_object
+              @stack.push(:object)
+              notify_start_document
+              notify_start_object
+            when LEFT_BRACKET
+              @state = :start_array
+              @stack.push(:array)
+              notify_start_document
+              notify_start_array
+            when WS
+              # ignore
+            else
+              error("Expected whitespace or object/array start")
+            end
           end
         end
       end

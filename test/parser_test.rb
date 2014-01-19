@@ -5,8 +5,8 @@ require 'test/unit'
 
 class ParserTest < Test::Unit::TestCase
 
-  # JSON documents must start with an array or object container
-  # and there must not be any extra data following that container.
+  # JSON documents must start with an array or object container and there must
+  # not be any extra data following that container unless it is another document
   def test_document
     expected = [:error]
     ['a', 'null', 'false', 'true', '12', '  false  '].each do |json|
@@ -25,6 +25,16 @@ class ParserTest < Test::Unit::TestCase
 
     expected = [:start_document, :start_object, :end_object, :end_document, :error]
     ['{}a', '{ } 12', ' {} false', ' { }, {}'].each do |json|
+      assert_equal(expected, events(json))
+    end
+
+    expected = [:start_document, :start_object, :end_object, :end_document] * 2
+    ['{}{}', '{ } {}', ' {} { }', ' { } { } '].each do |json|
+      assert_equal(expected, events(json))
+    end
+
+    expected = [:start_document, :start_array, :end_array, :end_document] * 2
+    ['[][]', '[ ] []', ' [] [ ]', ' [ ] [ ] '].each do |json|
       assert_equal(expected, events(json))
     end
   end

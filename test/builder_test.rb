@@ -120,4 +120,15 @@ class BuilderTest < Test::Unit::TestCase
                 "k5"=>"string value"}
     assert_equal(expected, @b.result)
   end
+
+  def test_two_documents
+    2.times do
+      @b.start_document
+      @b.start_object
+      @b.end_object
+      @b.end_document
+    end
+
+    assert_equal({}, @b.result)
+  end
 end
