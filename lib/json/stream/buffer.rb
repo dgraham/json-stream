@@ -2,13 +2,15 @@
 
 module JSON
   module Stream
-
     # A character buffer that expects a UTF-8 encoded stream of bytes.
     # This handles truncated multi-byte characters properly so we can just
     # feed it binary data and receive a properly formatted UTF-8 String as
-    # output. See here for UTF-8 parsing details:
-    # http://en.wikipedia.org/wiki/UTF-8
-    # http://tools.ietf.org/html/rfc3629#section-3
+    # output.
+    #
+    # More UTF-8 parsing details are available at:
+    #
+    #   http://en.wikipedia.org/wiki/UTF-8
+    #   http://tools.ietf.org/html/rfc3629#section-3
     class Buffer
       def initialize
         @state, @buf, @need = :start, [], 0
@@ -18,6 +20,12 @@ module JSON
       # as much of the data in a UTF-8 String as we have. Truncated multi-byte
       # characters are saved in the buffer until the next call to this method
       # where we expect to receive the rest of the multi-byte character.
+      #
+      # data - The partial binary encoded String data.
+      #
+      # Raises JSON::Stream::ParserError if the UTF-8 byte sequence is malformed.
+      #
+      # Returns a UTF-8 encoded String.
       def <<(data)
         bytes = []
         data.bytes.each do |b|

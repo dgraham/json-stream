@@ -9,10 +9,12 @@ module JSON
     # to us and we don't want to hold the entire parsed object in memory.
     # Regardless, this is a good example of how to write parser callbacks.
     #
-    # parser = JSON::Stream::Parser.new
-    # builder = JSON::Stream::Builder.new(parser)
-    # parser << json
-    # obj = builder.result
+    # Examples
+    #
+    #   parser = JSON::Stream::Parser.new
+    #   builder = JSON::Stream::Builder.new(parser)
+    #   parser << json
+    #   obj = builder.result
     class Builder
       METHODS = %w[start_document end_document start_object end_object start_array end_array key value]
 

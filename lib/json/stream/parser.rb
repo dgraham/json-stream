@@ -40,6 +40,17 @@ module JSON
       # Parses a full JSON document from a String or an IO stream and returns
       # the parsed object graph. For parsing small JSON documents with small
       # memory requirements, use the json gem's faster JSON.parse method instead.
+      #
+      # json - The String or IO containing JSON data.
+      #
+      # Examples
+      #
+      #   JSON::Stream::Parser.parse('{"hello": "world"}')
+      #   # => {"hello": "world"}
+      #
+      # Raises a JSON::Stream::ParserError if the JSON data is malformed.
+      #
+      # Returns a Hash.
       def self.parse(json)
         stream = json.is_a?(String) ? StringIO.new(json) : json
         parser = Parser.new
@@ -69,17 +80,20 @@ module JSON
       end
 
       # Create a new parser with an optional initialization block where
-      # we can register event callbacks. For example:
-      # parser = JSON::Stream::Parser.new do
-      #   start_document { puts "start document" }
-      #   end_document   { puts "end document" }
-      #   start_object   { puts "start object" }
-      #   end_object     { puts "end object" }
-      #   start_array    { puts "start array" }
-      #   end_array      { puts "end array" }
-      #   key            {|k| puts "key: #{k}" }
-      #   value          {|v| puts "value: #{v}" }
-      # end
+      # we can register event callbacks.
+      #
+      # Examples
+      #
+      #   parser = JSON::Stream::Parser.new do
+      #     start_document { puts "start document" }
+      #     end_document   { puts "end document" }
+      #     start_object   { puts "start object" }
+      #     end_object     { puts "end object" }
+      #     start_array    { puts "start array" }
+      #     end_array      { puts "end array" }
+      #     key            {|k| puts "key: #{k}" }
+      #     value          {|v| puts "value: #{v}" }
+      #   end
       def initialize(&block)
         @state = :start_document
         @utf8 = Buffer.new
@@ -91,6 +105,12 @@ module JSON
       # Pass data into the parser to advance the state machine and
       # generate callback events. This is well suited for an EventMachine
       # receive_data loop.
+      #
+      # data - The String of partial JSON data to parse.
+      #
+      # Raises a JSON::Stream::ParserError if the JSON data is malformed.
+      #
+      # Returns nothing.
       def <<(data)
         (@utf8 << data).each_char do |ch|
           @pos += 1
