@@ -34,7 +34,7 @@ class ParserTest < Test::Unit::TestCase
   def test_whitespace
     json = %Q{
       { " key 1 " : \t [
-        1, 2, " my string ",
+        1, 2, " my string ",\r
         false, true, null ]
       }
     }
