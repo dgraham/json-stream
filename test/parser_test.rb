@@ -29,7 +29,7 @@ class ParserTest < Test::Unit::TestCase
     end
   end
 
-  # Whitespace around tokens should be ignored.  Whitespace whithin strings
+  # Whitespace around tokens should be ignored. Whitespace within strings
   # must be preserved.
   def test_whitespace
     json = %Q{
