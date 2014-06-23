@@ -64,21 +64,6 @@ module JSON
         stream.close
       end
 
-      %w[start_document end_document start_object end_object
-          start_array end_array key value].each do |name|
-
-        define_method(name) do |&block|
-          @listeners[name] << block
-        end
-
-        define_method("notify_#{name}") do |*args|
-          @listeners[name].each do |block|
-            block.call(*args)
-          end
-        end
-        private "notify_#{name}"
-      end
-
       # Create a new parser with an optional initialization block where
       # we can register event callbacks.
       #
@@ -102,6 +87,38 @@ module JSON
         instance_eval(&block) if block_given?
       end
 
+      def start_document(&block)
+        @listeners[:start_document] << block
+      end
+
+      def end_document(&block)
+        @listeners[:end_document] << block
+      end
+
+      def start_object(&block)
+        @listeners[:start_object] << block
+      end
+
+      def end_object(&block)
+        @listeners[:end_object] << block
+      end
+
+      def start_array(&block)
+        @listeners[:start_array] << block
+      end
+
+      def end_array(&block)
+        @listeners[:end_array] << block
+      end
+
+      def key(&block)
+        @listeners[:key] << block
+      end
+
+      def value(&block)
+        @listeners[:value] << block
+      end
+
       # Pass data into the parser to advance the state machine and
       # generate callback events. This is well suited for an EventMachine
       # receive_data loop.
@@ -120,13 +137,13 @@ module JSON
             when LEFT_BRACE
               @state = :start_object
               @stack.push(:object)
-              notify_start_document
-              notify_start_object
+              notify(:start_document)
+              notify(:start_object)
             when LEFT_BRACKET
               @state = :start_array
               @stack.push(:array)
-              notify_start_document
-              notify_start_array
+              notify(:start_document)
+              notify(:start_array)
             when WS
               # ignore
             else
@@ -149,10 +166,10 @@ module JSON
             when QUOTE
               if @stack.pop == :string
                 @state = :end_value
-                notify_value(@buf)
+                notify(:value, @buf)
               else # :key
                 @state = :end_key
-                notify_key(@buf)
+                notify(:key, @buf)
               end
               @buf = ""
             when BACKSLASH
@@ -246,7 +263,7 @@ module JSON
               @buf << ch
             else
               @state = :end_value
-              notify_value(@buf.to_i)
+              notify(:value, @buf.to_i)
               @buf = ""
               @pos -= 1
               redo
@@ -268,7 +285,7 @@ module JSON
               @buf << ch
             else
               @state = :end_value
-              notify_value(@buf.to_f)
+              notify(:value, @buf.to_f)
               @buf = ""
               @pos -= 1
               redo
@@ -289,7 +306,7 @@ module JSON
               error('Expected 0-9 digit') unless @buf =~ DIGIT_END
               @state = :end_value
               num = @buf.include?('.') ? @buf.to_f : @buf.to_i
-              notify_value(num)
+              notify(:value, num)
               @buf = ""
               @pos -= 1
               redo
@@ -306,7 +323,7 @@ module JSON
               @buf << ch
             else
               @state = :end_value
-              notify_value(@buf.to_i)
+              notify(:value, @buf.to_i)
               @buf = ""
               @pos -= 1
               redo
@@ -372,16 +389,39 @@ module JSON
 
       private
 
+      # Invoke all registered observer procs for the event type.
+      #
+      # type - The Symbol listener name.
+      # args - The argument list to pass into the observer procs.
+      #
+      # Examples
+      #
+      #    # broadcast events for {"answer": 42}
+      #    notify(:start_object)
+      #    notify(:key, "answer")
+      #    notify(:value, 42)
+      #    notify(:end_object)
+      #
+      # Returns nothing.
+      def notify(type, *args)
+        @listeners[type].each do |block|
+          block.call(*args)
+        end
+      end
+
       def end_container(type)
         @state = :end_value
         if @stack.pop == type
-          send("notify_end_#{type}")
+          case type
+          when :object then notify(:end_object)
+          when :array  then notify(:end_array)
+          end
         else
           error("Expected end of #{type}")
         end
         if @stack.empty?
           @state = :end_document
-          notify_end_document
+          notify(:end_document)
         end
       end
 
@@ -395,7 +435,7 @@ module JSON
           if @buf == word
             @state = :end_value
             @buf = ""
-            notify_value(value)
+            notify(:value, value)
           else
             error("Expected #{word} keyword")
           end
@@ -407,11 +447,11 @@ module JSON
         when LEFT_BRACE
           @state = :start_object
           @stack.push(:object)
-          notify_start_object
+          notify(:start_object)
         when LEFT_BRACKET
           @state = :start_array
           @stack.push(:array)
-          notify_start_array
+          notify(:start_array)
         when QUOTE
           @state = :start_string
           @stack.push(:string)
