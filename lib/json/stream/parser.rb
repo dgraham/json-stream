@@ -10,7 +10,7 @@ module JSON
     class Parser
       BUF_SIZE      = 512
       CONTROL       = /[\x00-\x1F]/
-      WS            = /\s/
+      WS            = /[ \n\t\r]/
       HEX           = /[0-9a-fA-F]/
       DIGIT         = /[0-9]/
       DIGIT_1_9     = /[1-9]/

@@ -51,6 +51,18 @@ class ParserTest < Test::Unit::TestCase
     assert_equal(expected, events(json))
   end
 
+  def test_disallowed_form_feed_whitespace
+    json = "[1,\f 2]"
+    expected = [:start_document, :start_array, [:value, 1], :error]
+    assert_equal(expected, events(json))
+  end
+
+  def test_disallowed_vertical_tab_whitespace
+    json = "[1,\v 2]"
+    expected = [:start_document, :start_array, [:value, 1], :error]
+    assert_equal(expected, events(json))
+  end
+
   def test_keyword
     expected = [:start_document, :start_array, :error]
     ['[tru]', '[fal]', '[nul,true]', '[fals1]'].each do |json|
