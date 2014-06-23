@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
 require 'json/stream'
-require 'test/unit'
+require 'minitest/autorun'
 
-class BuilderTest < Test::Unit::TestCase
+class BuilderTest < MiniTest::Unit::TestCase
   def setup
     @b = JSON::Stream::Builder.new(JSON::Stream::Parser.new)
   end

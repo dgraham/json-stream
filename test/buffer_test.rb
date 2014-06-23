@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
 require 'json/stream'
-require 'test/unit'
+require 'minitest/autorun'
 
-class BufferTest < Test::Unit::TestCase
+class BufferTest < MiniTest::Unit::TestCase
   def setup
     @buf = JSON::Stream::Buffer.new
   end
@@ -54,34 +54,34 @@ class BufferTest < Test::Unit::TestCase
   end
 
   def test_invalid_two_byte_start_chars
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xC3\xC3" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xC3\xC3" }
   end
 
   def test_invalid_three_byte_start_chars
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xE2\xE2" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xE2\xE2" }
   end
 
   def test_invalid_four_byte_start_chars
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xF0\xF0" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xF0\xF0" }
   end
 
   def test_two_byte_start_with_single_byte_continuation_char
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xC3\u0000" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xC3\u0000" }
   end
 
   def test_three_byte_start_with_single_byte_continuation_char
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xE2\u0010" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xE2\u0010" }
   end
 
   def test_four_byte_start_with_single_byte_continuation_char
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xF0a" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xF0a" }
   end
 
   def test_invalid_continuation_char
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xA9" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xA9" }
   end
 
   def test_overlong_form
-    assert_raise(JSON::Stream::ParserError) { @buf << "\xC0\x80" }
+    assert_raises(JSON::Stream::ParserError) { @buf << "\xC0\x80" }
   end
 end

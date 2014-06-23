@@ -1,9 +1,9 @@
 # encoding: UTF-8
 
 require 'json/stream'
-require 'test/unit'
+require 'minitest/autorun'
 
-class ParserTest < Test::Unit::TestCase
+class ParserTest < MiniTest::Unit::TestCase
 
   # JSON documents must start with an array or object container
   # and there must not be any extra data following that container.
