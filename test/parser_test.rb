@@ -432,7 +432,7 @@ class ParserTest < Test::Unit::TestCase
     collector = Events.new(parser)
     begin
       json.each_char {|ch| parser << ch }
-    rescue JSON::Stream::ParserError => e
+    rescue JSON::Stream::ParserError
       collector.error
     end
     collector.events
