@@ -12,8 +12,8 @@ task :build => [:pkg] do
 end
 
 Rake::TestTask.new(:test) do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/*_test.rb'
+  test.libs << 'spec'
+  test.pattern = 'spec/**/*_spec.rb'
   test.warning = true
 end
 
