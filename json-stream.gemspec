@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.license      = 'MIT'
 
   s.files        = Dir['[A-Z]*', 'json-stream.gemspec', '{lib}/**/*']
-  s.test_files   = Dir['test/**/*']
+  s.test_files   = Dir['spec/**/*']
   s.require_path = 'lib'
 
   s.add_development_dependency 'rake'
