@@ -8,7 +8,7 @@ module JSON
     # state changes. Use the json gem for small documents. Use this
     # for huge documents that won't fit in memory.
     class Parser
-      BUF_SIZE      = 512
+      BUF_SIZE      = 4096
       CONTROL       = /[\x00-\x1F]/
       WS            = /[ \n\t\r]/
       HEX           = /[0-9a-fA-F]/
