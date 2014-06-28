@@ -81,9 +81,7 @@ describe JSON::Stream::Parser do
       assert_equal expected, events(' { }, {}')
     end
 
-    # Whitespace around tokens should be ignored. Whitespace within strings
-    # must be preserved.
-    it 'ignores whitespace around tokens' do
+    it 'ignores whitespace around tokens, preserves it within strings' do
       json = %Q{
         { " key 1 " : \t [
           1, 2, " my string ",\r
