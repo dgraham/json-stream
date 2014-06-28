@@ -290,7 +290,7 @@ describe JSON::Stream::Parser do
       assert_equal expected, events(%q{ [" \\a "] })
     end
 
-    it 'parses character escapes' do
+    it 'parses two-character escapes' do
       expected = [:start_document, :start_array, [:value, "\" \\ / \b \f \n \r \t"], :end_array, :end_document]
       assert_equal expected, events('["\" \\\ \/ \b \f \n \r \t"]')
 
