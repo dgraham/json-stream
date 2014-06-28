@@ -14,9 +14,10 @@ describe JSON::Stream::Parser do
 
     it 'parses array documents' do
       expected = [:start_document, :start_array, :end_array, :end_document]
-      ['[]', '[ ]', ' [] ', ' [ ] '].each do |json|
-        assert_equal expected, events(json)
-      end
+      assert_equal expected, events('[]')
+      assert_equal expected, events('[ ]')
+      assert_equal expected, events(' [] ')
+      assert_equal expected, events(' [ ] ')
     end
 
     it 'parses object documents' do
