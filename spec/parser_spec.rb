@@ -287,7 +287,7 @@ describe JSON::Stream::Parser do
   describe 'parsing string tokens' do
     it 'rejects invalid escape characters' do
       expected = [:start_document, :start_array, :error]
-      assert_equal expected, events(%q{ [" \\a "] })
+      assert_equal expected, events('["\\a"]')
     end
 
     describe 'parsing two-character escapes' do
