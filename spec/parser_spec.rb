@@ -347,19 +347,22 @@ describe JSON::Stream::Parser do
       end
     end
 
-    it 'rejects control character in array' do
-      expected = [:start_document, :start_array, :error]
-      assert_equal expected, events("[\" \u0000 \"]")
-    end
+    describe 'parsing control characters' do
+      it 'rejects control character in array' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events("[\" \u0000 \"]")
+      end
 
-    it 'rejects control character in object' do
-      expected = [:start_document, :start_object, :error]
-      assert_equal expected, events("{\" \u0000 \":12}")
-    end
+      it 'rejects control character in object' do
+        expected = [:start_document, :start_object, :error]
+        assert_equal expected, events("{\" \u0000 \":12}")
+      end
 
-    it 'parses non-control character' do
-      expected = [:start_document, :start_array, [:value, " \u007F "], :end_array, :end_document]
-      assert_equal expected, events("[\" \u007f \"]")
+      it 'parses non-control character' do
+        # del ascii 127 is allowed unescaped in json
+        expected = [:start_document, :start_array, [:value, " \u007F "], :end_array, :end_document]
+        assert_equal expected, events("[\" \u007f \"]")
+      end
     end
 
     it 'rejects invalid unicode escapes' do
