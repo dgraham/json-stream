@@ -135,11 +135,11 @@ describe JSON::Stream::Builder do
     subject.end_object
     subject.end_document
     expected = {
-      "k1"=>1,
-      "k2"=>{},
-      "k3"=>{"sub1"=>[12]},
-      "k4"=>[1, {"sub2"=>[nil]}],
-      "k5"=>"string value"
+      "k1" => 1,
+      "k2" => {},
+      "k3" => {"sub1" => [12]},
+      "k4" => [1, {"sub2" => [nil]}],
+      "k5" => "string value"
     }
     assert_equal expected, subject.result
   end
