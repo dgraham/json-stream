@@ -13,7 +13,9 @@ module JSON
     #   http://tools.ietf.org/html/rfc3629#section-3
     class Buffer
       def initialize
-        @state, @buf, @need = :start, [], 0
+        @state = :start
+        @buf = []
+        @need = 0
       end
 
       # Fill the buffer with a String of binary UTF-8 encoded bytes. Returns
