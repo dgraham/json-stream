@@ -363,25 +363,47 @@ describe JSON::Stream::Parser do
       end
     end
 
-    it 'rejects invalid unicode escapes' do
-      expected = [:start_document, :start_array, :error]
-      [%q{ [" \\u "] }, %q{ [" \\u2 "]}, %q{ [" \\u26 "]}, %q{ [" \\u260 "]}].each do |json|
-        assert_equal expected, events(json)
+    describe 'parsing unicode escape sequences' do
+      it 'parses un-escaped raw unicode' do
+        # U+1F602 face with tears of joy
+        face = "\xf0\x9f\x98\x82"
+        expected = [:start_document, :start_array, [:value, face], :end_array, :end_document]
+        assert_equal expected, events('["' + face + '"]')
       end
-    end
 
-    it 'parses unicode escapes' do
-      expected = [:start_document, :start_array, [:value, "\u2603"], :end_array, :end_document]
-      assert_equal expected, events(%q{ ["\\u2603"] })
+      it 'parses escaped unicode surrogate pairs' do
+        # U+1F602 face with tears of joy
+        face = "\xf0\x9f\x98\x82"
+        escaped = '\uD83D\uDE02'
+        expected = [:start_document, :start_array, [:value, face], :end_array, :end_document]
+        assert_equal expected, events('["' + escaped + '"]')
+      end
 
-      expected = [:start_document, :start_array, [:value, "snow\u2603 man"], :end_array, :end_document]
-      assert_equal expected, events(%q{ ["snow\\u2603 man"] })
+      it 'rejects partial unicode escapes' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events(%q{ [" \\u "] })
+        assert_equal expected, events(%q{ [" \\u2 "]})
+        assert_equal expected, events(%q{ [" \\u26 "]})
+        assert_equal expected, events(%q{ [" \\u260 "]})
+      end
 
-      expected = [:start_document, :start_array, [:value, "snow\u26033 man"], :end_array, :end_document]
-      assert_equal expected, events(%q{ ["snow\\u26033 man"] })
+      it 'parses unicode escapes' do
+        # U+2603 snowman
+        snowman = "\xe2\x98\x83"
+        escaped = '\u2603'
 
-      expected = [:start_document, :start_object, [:key, "snow\u26033 man"], [:value, 1], :end_object, :end_document]
-      assert_equal expected, events(%q{ {"snow\\u26033 man": 1} })
+        expected = [:start_document, :start_array, [:value, snowman], :end_array, :end_document]
+        assert_equal expected, events('["' + escaped + '"]')
+
+        expected = [:start_document, :start_array, [:value, 'snow' + snowman + ' man'], :end_array, :end_document]
+        assert_equal expected, events('["snow' + escaped + ' man"]')
+
+        expected = [:start_document, :start_array, [:value, 'snow' + snowman + '3 man'], :end_array, :end_document]
+        assert_equal expected, events('["snow' + escaped + '3 man"]')
+
+        expected = [:start_document, :start_object, [:key, 'snow' + snowman + '3 man'], [:value, 1], :end_object, :end_document]
+        assert_equal expected, events('{"snow\\u26033 man": 1}')
+      end
     end
 
     it 'parses unicode escapes with surrogate pairs' do
