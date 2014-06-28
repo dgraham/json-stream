@@ -6,6 +6,24 @@ require 'minitest/autorun'
 describe JSON::Stream::Builder do
   subject { JSON::Stream::Builder.new(JSON::Stream::Parser.new) }
 
+  it 'builds a false value' do
+    assert_nil subject.result
+    subject.start_document
+    subject.value(false)
+    assert_nil subject.result
+    subject.end_document
+    assert_equal false, subject.result
+  end
+
+  it 'builds a string value' do
+    assert_nil subject.result
+    subject.start_document
+    subject.value("test")
+    assert_nil subject.result
+    subject.end_document
+    assert_equal "test", subject.result
+  end
+
   it 'builds an empty array' do
     assert_nil subject.result
     subject.start_document
