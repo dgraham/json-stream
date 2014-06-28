@@ -4,7 +4,8 @@ require 'json/stream'
 require 'minitest/autorun'
 
 describe JSON::Stream::Builder do
-  subject { JSON::Stream::Builder.new(JSON::Stream::Parser.new) }
+  let(:parser) { JSON::Stream::Parser.new }
+  subject { JSON::Stream::Builder.new(parser) }
 
   it 'builds a false value' do
     assert_nil subject.result
@@ -142,5 +143,15 @@ describe JSON::Stream::Builder do
       "k5" => "string value"
     }
     assert_equal expected, subject.result
+  end
+
+  it 'builds a real document' do
+    refute_nil subject
+    parser << File.read('spec/fixtures/repository.json')
+    refute_nil subject.result
+    assert_equal 'rails', subject.result['name']
+    assert_equal 4223, subject.result['owner']['id']
+    assert_equal false, subject.result['fork']
+    assert_equal nil, subject.result['mirror_url']
   end
 end
