@@ -2,18 +2,14 @@
 
 module JSON
   module Stream
-    # A parser listener that builds a full, in memory, object graph from a
-    # JSON document. Typically, we would use the json gem's JSON.parse() method
-    # when we have the full JSON document because it's much faster than this.
-    # JSON::Stream is typically used when we have a huge JSON document streaming
-    # to us and we don't want to hold the entire parsed object in memory.
-    # Regardless, this is a good example of how to write parser callbacks.
+    # A parser listener that builds a full, in memory, object from a JSON
+    # document. This is similar to using the json gem's `JSON.parse` method.
     #
     # Examples
     #
     #   parser = JSON::Stream::Parser.new
     #   builder = JSON::Stream::Builder.new(parser)
-    #   parser << json
+    #   parser << '{"answer": 42, "question": false}'
     #   obj = builder.result
     class Builder
       METHODS = %w[start_document end_document start_object end_object start_array end_array key value]
