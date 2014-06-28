@@ -290,15 +290,61 @@ describe JSON::Stream::Parser do
       assert_equal expected, events(%q{ [" \\a "] })
     end
 
-    it 'parses two-character escapes' do
-      expected = [:start_document, :start_array, [:value, "\" \\ / \b \f \n \r \t"], :end_array, :end_document]
-      assert_equal expected, events('["\" \\\ \/ \b \f \n \r \t"]')
+    describe 'parsing two-character escapes' do
+      it 'parses quotation mark' do
+        expected = [:start_document, :start_array, [:value, "\""], :end_array, :end_document]
+        assert_equal expected, events('["\""]')
+      end
 
-      expected = [:start_document, :start_array, [:value, "\"\\/\b\f\n\r\t"], :end_array, :end_document]
-      assert_equal expected, events('["\"\\\\/\b\f\n\r\t"]')
+      it 'parses reverse solidus' do
+        expected = [:start_document, :start_array, [:value, "\\"], :end_array, :end_document]
+        assert_equal expected, events('["\\\"]')
+      end
 
-      expected = [:start_document, :start_array, [:value, "\"t\\b/f\bn\f/\nn\rr\t"], :end_array, :end_document]
-      assert_equal expected, events('["\"t\\\b\/f\bn\f/\nn\rr\t"]')
+      it 'parses solidus' do
+        expected = [:start_document, :start_array, [:value, "/"], :end_array, :end_document]
+        assert_equal expected, events('["\/"]')
+      end
+
+      it 'parses backspace' do
+        expected = [:start_document, :start_array, [:value, "\b"], :end_array, :end_document]
+        assert_equal expected, events('["\b"]')
+      end
+
+      it 'parses form feed' do
+        expected = [:start_document, :start_array, [:value, "\f"], :end_array, :end_document]
+        assert_equal expected, events('["\f"]')
+      end
+
+      it 'parses line feed' do
+        expected = [:start_document, :start_array, [:value, "\n"], :end_array, :end_document]
+        assert_equal expected, events('["\n"]')
+      end
+
+      it 'parses carriage return' do
+        expected = [:start_document, :start_array, [:value, "\r"], :end_array, :end_document]
+        assert_equal expected, events('["\r"]')
+      end
+
+      it 'parses tab' do
+        expected = [:start_document, :start_array, [:value, "\t"], :end_array, :end_document]
+        assert_equal expected, events('["\t"]')
+      end
+
+      it 'parses a series of escapes with whitespace' do
+        expected = [:start_document, :start_array, [:value, "\" \\ / \b \f \n \r \t"], :end_array, :end_document]
+        assert_equal expected, events('["\" \\\ \/ \b \f \n \r \t"]')
+      end
+
+      it 'parses a series of escapes without whitespace' do
+        expected = [:start_document, :start_array, [:value, "\"\\/\b\f\n\r\t"], :end_array, :end_document]
+        assert_equal expected, events('["\"\\\\/\b\f\n\r\t"]')
+      end
+
+      it 'parses a series of escapes with duplicate characters between them' do
+        expected = [:start_document, :start_array, [:value, "\"t\\b/f\bn\f/\nn\rr\t"], :end_array, :end_document]
+        assert_equal expected, events('["\"t\\\b\/f\bn\f/\nn\rr\t"]')
+      end
     end
 
     it 'rejects control character in array' do
