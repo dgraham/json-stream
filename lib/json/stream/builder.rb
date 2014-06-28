@@ -23,66 +23,49 @@ module JSON
       end
 
       def start_document
-        @stack, @result = [], nil
+        @stack = []
+        @keys = []
+        @result = nil
       end
 
       def end_document
-        @result = @stack.pop.obj
+        @result = @stack.pop
       end
 
       def start_object
-        @stack.push(ObjectNode.new)
+        @stack.push({})
       end
 
       def end_object
-        unless @stack.size == 1
-          node = @stack.pop
-          @stack.last << node.obj
+        return if @stack.size == 1
+        node = @stack.pop
+
+        case @stack.last
+        when Hash
+          @stack.last[@keys.pop] = node
+        when Array
+          @stack.last << node
         end
       end
       alias :end_array :end_object
 
       def start_array
-        @stack.push(ArrayNode.new)
+        @stack.push([])
       end
 
       def key(key)
-        @stack.last << key
+        @keys << key
       end
 
       def value(value)
-        @stack.last << value
-      end
-    end
-
-    class ArrayNode
-      attr_reader :obj
-
-      def initialize
-        @obj = []
-      end
-
-      def <<(node)
-        @obj << node
-        self
-      end
-    end
-
-    class ObjectNode
-      attr_reader :obj
-
-      def initialize
-        @obj, @key = {}, nil
-      end
-
-      def <<(node)
-        if @key
-          @obj[@key] = node
-          @key = nil
+        case @stack.last
+        when Hash
+          @stack.last[@keys.pop] = value
+        when Array
+          @stack.last << value
         else
-          @key = node
+          @stack << value
         end
-        self
       end
     end
   end
