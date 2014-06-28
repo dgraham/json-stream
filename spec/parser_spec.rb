@@ -15,22 +15,24 @@ describe JSON::Stream::Parser do
     it 'parses array documents' do
       expected = [:start_document, :start_array, :end_array, :end_document]
       ['[]', '[ ]', ' [] ', ' [ ] '].each do |json|
-        assert_equal(expected, events(json))
+        assert_equal expected, events(json)
       end
     end
 
     it 'parses object documents' do
       expected = [:start_document, :start_object, :end_object, :end_document]
-      ['{}', '{ }', ' {} ', ' { } '].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('{}')
+      assert_equal expected, events('{ }')
+      assert_equal expected, events(' {} ')
+      assert_equal expected, events(' { } ')
     end
 
     it 'rejects documents with trailing characters' do
       expected = [:start_document, :start_object, :end_object, :end_document, :error]
-      ['{}a', '{ } 12', ' {} false', ' { }, {}'].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('{}a')
+      assert_equal expected, events('{ } 12')
+      assert_equal expected, events(' {} false')
+      assert_equal expected, events(' { }, {}')
     end
 
     # Whitespace around tokens should be ignored. Whitespace within strings
@@ -57,7 +59,7 @@ describe JSON::Stream::Parser do
           :end_object,
         :end_document
       ]
-      assert_equal(expected, events(json))
+      assert_equal expected, events(json)
     end
 
     it 'rejects form feed whitespace' do
@@ -75,218 +77,218 @@ describe JSON::Stream::Parser do
     it 'rejects partial keyword tokens' do
       expected = [:start_document, :start_array, :error]
       ['[tru]', '[fal]', '[nul,true]', '[fals1]'].each do |json|
-        assert_equal(expected, events(json))
+        assert_equal expected, events(json)
       end
 
       expected = [:start_document, :start_array, [:value, true], :end_array, :end_document]
-      assert_equal(expected, events('[true]'))
+      assert_equal expected, events('[true]')
 
       expected = [:start_document, :start_array, [:value, true], [:value, nil], :end_array, :end_document]
-      assert_equal(expected, events('[true, null]'))
+      assert_equal expected, events('[true, null]')
     end
   end
 
   describe 'parsing number tokens' do
     it 'rejects invalid negative numbers' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('[-]'))
+      assert_equal expected, events('[-]')
 
       expected = [:start_document, :start_array, [:value, 1], :error]
-      assert_equal(expected, events('[1-0]'))
+      assert_equal expected, events('[1-0]')
     end
 
     it 'parses integer zero' do
       expected = [:start_document, :start_array, [:value, 0], :end_array, :end_document]
-      assert_equal(expected, events('[0]'))
-      assert_equal(expected, events('[-0]'))
+      assert_equal expected, events('[0]')
+      assert_equal expected, events('[-0]')
     end
 
     it 'parses float zero' do
       expected = [:start_document, :start_array, [:value, 0.0], :end_array, :end_document]
-      assert_equal(expected, events('[0.0]'))
-      assert_equal(expected, events('[-0.0]'))
+      assert_equal expected, events('[0.0]')
+      assert_equal expected, events('[-0.0]')
     end
 
     it 'rejects multi zero' do
       expected = [:start_document, :start_array, [:value, 0], :error]
-      assert_equal(expected, events('[00]'))
-      assert_equal(expected, events('[-00]'))
+      assert_equal expected, events('[00]')
+      assert_equal expected, events('[-00]')
     end
 
     it 'rejects integers that start with zero' do
       expected = [:start_document, :start_array, [:value, 0], :error]
-      assert_equal(expected, events('[01]'))
-      assert_equal(expected, events('[-01]'))
+      assert_equal expected, events('[01]')
+      assert_equal expected, events('[-01]')
     end
 
     it 'parses integer tokens' do
       expected = [:start_document, :start_array, [:value, 1], :end_array, :end_document]
-      assert_equal(expected, events('[1]'))
+      assert_equal expected, events('[1]')
 
       expected = [:start_document, :start_array, [:value, -1], :end_array, :end_document]
-      assert_equal(expected, events('[-1]'))
+      assert_equal expected, events('[-1]')
 
       expected = [:start_document, :start_array, [:value, 123], :end_array, :end_document]
-      assert_equal(expected, events('[123]'))
+      assert_equal expected, events('[123]')
 
       expected = [:start_document, :start_array, [:value, -123], :end_array, :end_document]
-      assert_equal(expected, events('[-123]'))
+      assert_equal expected, events('[-123]')
     end
 
     it 'parses float tokens' do
       expected = [:start_document, :start_array, [:value, 1.0], :end_array, :end_document]
-      assert_equal(expected, events('[1.0]'))
-      assert_equal(expected, events('[1.00]'))
+      assert_equal expected, events('[1.0]')
+      assert_equal expected, events('[1.00]')
     end
 
     it 'parses negative floats' do
       expected = [:start_document, :start_array, [:value, -1.0], :end_array, :end_document]
-      assert_equal(expected, events('[-1.0]'))
-      assert_equal(expected, events('[-1.00]'))
+      assert_equal expected, events('[-1.0]')
+      assert_equal expected, events('[-1.00]')
     end
 
     it 'parses multi-digit floats' do
       expected = [:start_document, :start_array, [:value, 123.012], :end_array, :end_document]
-      assert_equal(expected, events('[123.012]'))
-      assert_equal(expected, events('[123.0120]'))
+      assert_equal expected, events('[123.012]')
+      assert_equal expected, events('[123.0120]')
     end
 
     it 'parses negative multi-digit floats' do
       expected = [:start_document, :start_array, [:value, -123.012], :end_array, :end_document]
-      assert_equal(expected, events('[-123.012]'))
-      assert_equal(expected, events('[-123.0120]'))
+      assert_equal expected, events('[-123.012]')
+      assert_equal expected, events('[-123.0120]')
     end
 
     it 'rejects floats missing leading zero' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('[.1]'))
-      assert_equal(expected, events('[-.1]'))
-      assert_equal(expected, events('[.01]'))
-      assert_equal(expected, events('[-.01]'))
+      assert_equal expected, events('[.1]')
+      assert_equal expected, events('[-.1]')
+      assert_equal expected, events('[.01]')
+      assert_equal expected, events('[-.01]')
     end
 
     it 'rejects float missing fraction' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('[.]'))
-      assert_equal(expected, events('[..]'))
-      assert_equal(expected, events('[0.]'))
-      assert_equal(expected, events('[12.]'))
+      assert_equal expected, events('[.]')
+      assert_equal expected, events('[..]')
+      assert_equal expected, events('[0.]')
+      assert_equal expected, events('[12.]')
     end
 
     it 'parses positive exponent integers' do
       expected = [:start_document, :start_array, [:value, 212], :end_array, :end_document]
-      assert_equal(expected, events('[2.12e2]'))
-      assert_equal(expected, events('[2.12e02]'))
-      assert_equal(expected, events('[2.12e+2]'))
-      assert_equal(expected, events('[2.12e+02]'))
+      assert_equal expected, events('[2.12e2]')
+      assert_equal expected, events('[2.12e02]')
+      assert_equal expected, events('[2.12e+2]')
+      assert_equal expected, events('[2.12e+02]')
     end
 
     it 'parses positive exponent floats' do
       expected = [:start_document, :start_array, [:value, 21.2], :end_array, :end_document]
-      assert_equal(expected, events('[2.12e1]'))
-      assert_equal(expected, events('[2.12e01]'))
-      assert_equal(expected, events('[2.12e+1]'))
-      assert_equal(expected, events('[2.12e+01]'))
+      assert_equal expected, events('[2.12e1]')
+      assert_equal expected, events('[2.12e01]')
+      assert_equal expected, events('[2.12e+1]')
+      assert_equal expected, events('[2.12e+01]')
     end
 
     it 'parses negative exponent' do
       expected = [:start_document, :start_array, [:value, 0.0212], :end_array, :end_document]
-      assert_equal(expected, events('[2.12e-2]'))
-      assert_equal(expected, events('[2.12e-02]'))
-      assert_equal(expected, events('[2.12e-2]'))
-      assert_equal(expected, events('[2.12e-02]'))
+      assert_equal expected, events('[2.12e-2]')
+      assert_equal expected, events('[2.12e-02]')
+      assert_equal expected, events('[2.12e-2]')
+      assert_equal expected, events('[2.12e-02]')
     end
 
     it 'parses zero exponent floats' do
       expected = [:start_document, :start_array, [:value, 2.12], :end_array, :end_document]
-      assert_equal(expected, events('[2.12e0]'))
-      assert_equal(expected, events('[2.12e00]'))
-      assert_equal(expected, events('[2.12e-0]'))
-      assert_equal(expected, events('[2.12e-00]'))
+      assert_equal expected, events('[2.12e0]')
+      assert_equal expected, events('[2.12e00]')
+      assert_equal expected, events('[2.12e-0]')
+      assert_equal expected, events('[2.12e-00]')
     end
 
     it 'parses zero exponent integers' do
       expected = [:start_document, :start_array, [:value, 2.0], :end_array, :end_document]
-      assert_equal(expected, events('[2e0]'))
-      assert_equal(expected, events('[2e00]'))
-      assert_equal(expected, events('[2e-0]'))
-      assert_equal(expected, events('[2e-00]'))
+      assert_equal expected, events('[2e0]')
+      assert_equal expected, events('[2e00]')
+      assert_equal expected, events('[2e-0]')
+      assert_equal expected, events('[2e-00]')
     end
 
     it 'rejects missing exponent' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('[e]'))
-      assert_equal(expected, events('[1e]'))
-      assert_equal(expected, events('[1e-]'))
-      assert_equal(expected, events('[1e--]'))
-      assert_equal(expected, events('[1e+]'))
-      assert_equal(expected, events('[1e++]'))
-      assert_equal(expected, events('[0.e]'))
-      assert_equal(expected, events('[10.e]'))
+      assert_equal expected, events('[e]')
+      assert_equal expected, events('[1e]')
+      assert_equal expected, events('[1e-]')
+      assert_equal expected, events('[1e--]')
+      assert_equal expected, events('[1e+]')
+      assert_equal expected, events('[1e++]')
+      assert_equal expected, events('[0.e]')
+      assert_equal expected, events('[10.e]')
     end
 
     it 'rejects float with trailing character' do
       expected = [:start_document, :start_array, [:value, 0.0], :error]
-      assert_equal(expected, events('[0.0q]'))
+      assert_equal expected, events('[0.0q]')
     end
 
     it 'rejects integer with trailing character' do
       expected = [:start_document, :start_array, [:value, 1], :error]
-      assert_equal(expected, events('[1q]'))
+      assert_equal expected, events('[1q]')
     end
   end
 
   describe 'parsing string tokens' do
     it 'rejects invalid escape characters' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events(%q{ [" \\a "] }))
+      assert_equal expected, events(%q{ [" \\a "] })
     end
 
     it 'parses character escapes' do
       expected = [:start_document, :start_array, [:value, "\" \\ / \b \f \n \r \t"], :end_array, :end_document]
-      assert_equal(expected, events('["\" \\\ \/ \b \f \n \r \t"]'))
+      assert_equal expected, events('["\" \\\ \/ \b \f \n \r \t"]')
 
       expected = [:start_document, :start_array, [:value, "\"\\/\b\f\n\r\t"], :end_array, :end_document]
-      assert_equal(expected, events('["\"\\\\/\b\f\n\r\t"]'))
+      assert_equal expected, events('["\"\\\\/\b\f\n\r\t"]')
 
       expected = [:start_document, :start_array, [:value, "\"t\\b/f\bn\f/\nn\rr\t"], :end_array, :end_document]
-      assert_equal(expected, events('["\"t\\\b\/f\bn\f/\nn\rr\t"]'))
+      assert_equal expected, events('["\"t\\\b\/f\bn\f/\nn\rr\t"]')
     end
 
     it 'rejects control character in array' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events("[\" \u0000 \"]"))
+      assert_equal expected, events("[\" \u0000 \"]")
     end
 
     it 'rejects control character in object' do
       expected = [:start_document, :start_object, :error]
-      assert_equal(expected, events("{\" \u0000 \":12}"))
+      assert_equal expected, events("{\" \u0000 \":12}")
     end
 
     it 'parses non-control character' do
       expected = [:start_document, :start_array, [:value, " \u007F "], :end_array, :end_document]
-      assert_equal(expected, events("[\" \u007f \"]"))
+      assert_equal expected, events("[\" \u007f \"]")
     end
 
     it 'rejects invalid unicode escapes' do
       expected = [:start_document, :start_array, :error]
       [%q{ [" \\u "] }, %q{ [" \\u2 "]}, %q{ [" \\u26 "]}, %q{ [" \\u260 "]}].each do |json|
-        assert_equal(expected, events(json))
+        assert_equal expected, events(json)
       end
     end
 
     it 'parses unicode escapes' do
       expected = [:start_document, :start_array, [:value, "\u2603"], :end_array, :end_document]
-      assert_equal(expected, events(%q{ ["\\u2603"] }))
+      assert_equal expected, events(%q{ ["\\u2603"] })
 
       expected = [:start_document, :start_array, [:value, "snow\u2603 man"], :end_array, :end_document]
-      assert_equal(expected, events(%q{ ["snow\\u2603 man"] }))
+      assert_equal expected, events(%q{ ["snow\\u2603 man"] })
 
       expected = [:start_document, :start_array, [:value, "snow\u26033 man"], :end_array, :end_document]
-      assert_equal(expected, events(%q{ ["snow\\u26033 man"] }))
+      assert_equal expected, events(%q{ ["snow\\u26033 man"] })
 
       expected = [:start_document, :start_object, [:key, "snow\u26033 man"], [:value, 1], :end_object, :end_document]
-      assert_equal(expected, events(%q{ {"snow\\u26033 man": 1} }))
+      assert_equal expected, events(%q{ {"snow\\u26033 man": 1} })
     end
 
     it 'parses unicode escapes with surrogate pairs' do
@@ -311,44 +313,44 @@ describe JSON::Stream::Parser do
   describe 'parsing arrays' do
     it 'rejects trailing comma' do
       expected = [:start_document, :start_array, [:value, 12], :error]
-      assert_equal(expected, events('[12, ]'))
+      assert_equal expected, events('[12, ]')
     end
 
     it 'parses nested empty array' do
       expected = [:start_document, :start_array, :start_array, :end_array, :end_array, :end_document]
-      assert_equal(expected, events('[[]]'))
+      assert_equal expected, events('[[]]')
     end
 
     it 'parses nested array with value' do
       expected = [:start_document, :start_array, :start_array, [:value, 2.1], :end_array, :end_array, :end_document]
-      assert_equal(expected, events('[[ 2.10 ]]'))
+      assert_equal expected, events('[[ 2.10 ]]')
     end
 
     it 'rejects malformed arrays' do
       expected = [:start_document, :start_array, :error]
-      ['[}', '[,]', '[, 12]'].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('[}')
+      assert_equal expected, events('[,]')
+      assert_equal expected, events('[, 12]')
     end
 
     it 'rejects malformed nested arrays' do
       expected = [:start_document, :start_array, :start_array, :error]
       assert_equal(expected, events('[[}]'))
-      ['[[}]', '[[,]]'].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('[[}]')
+      assert_equal expected, events('[[,]]')
     end
 
     it 'rejects malformed array value lists' do
       expected = [:start_document, :start_array, [:value, "test"], :error]
-      ['["test"}', '["test",]', '["test" "test"]', '["test" 12]'].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('["test"}')
+      assert_equal expected, events('["test",]')
+      assert_equal expected, events('["test" "test"]')
+      assert_equal expected, events('["test" 12]')
     end
 
     it 'parses array with value' do
       expected = [:start_document, :start_array, [:value, "test"], :end_array, :end_document]
-      assert_equal(expected, events('["test"]'))
+      assert_equal expected, events('["test"]')
     end
 
     it 'parses array with value list' do
@@ -363,21 +365,20 @@ describe JSON::Stream::Parser do
           :end_array,
         :end_document
       ]
-      assert_equal(expected, events('[1,2, null, 12.1,"test"]'))
+      assert_equal expected, events('[1,2, null, 12.1,"test"]')
     end
   end
 
   describe 'parsing objects' do
     it 'rejects malformed objects' do
       expected = [:start_document, :start_object, :error]
-      ['{]', '{:}'].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('{]')
+      assert_equal expected, events('{:}')
     end
 
     it 'parses single key object' do
       expected = [:start_document, :start_object, [:key, "key 1"], [:value, 12], :end_object, :end_document]
-      assert_equal(expected, events('{"key 1" : 12}'))
+      assert_equal expected, events('{"key 1" : 12}')
     end
 
     it 'parses object key value list' do
@@ -389,7 +390,7 @@ describe JSON::Stream::Parser do
           :end_object,
         :end_document
       ]
-      assert_equal(expected, events('{"key 1" : 12, "key 2":"two"}'))
+      assert_equal expected, events('{"key 1" : 12, "key 2":"two"}')
     end
 
     it 'rejects object key with no value' do
@@ -405,70 +406,70 @@ describe JSON::Stream::Parser do
             [:key, "key 2"],
           :error
       ]
-      assert_equal(expected, events('{"key": [ null , false , true ] ,"key 2"}'))
+      assert_equal expected, events('{"key": [ null , false , true ] ,"key 2"}')
     end
 
     it 'rejects object with trailing comma' do
       expected = [:start_document, :start_object, [:key, "key 1"], [:value, 12], :error]
-      assert_equal(expected, events('{"key 1" : 12,}'))
+      assert_equal expected, events('{"key 1" : 12,}')
     end
   end
 
   describe 'parsing unicode bytes' do
     it 'parses single byte utf8' do
       expected = [:start_document, :start_array, [:value, "test"], :end_array, :end_document]
-      assert_equal(expected, events('["test"]'))
+      assert_equal expected, events('["test"]')
     end
 
     it 'parses full two byte utf8' do
       expected = [
         :start_document,
-        :start_array,
-        [:value, "résumé"],
-        [:value, "éé"],
-        :end_array,
+          :start_array,
+            [:value, "résumé"],
+            [:value, "éé"],
+          :end_array,
         :end_document
       ]
-      assert_equal(expected, events("[\"résumé\", \"é\xC3\xA9\"]"))
+      assert_equal expected, events("[\"résumé\", \"é\xC3\xA9\"]")
     end
 
     # Parser should throw an error when only one byte of a two byte character
     # is available. The \xC3 byte is the first byte of the é character.
     it 'rejects a partial two byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xC3"]'))
+      assert_equal expected, events('["\xC3"]')
     end
 
     it 'parses valid two byte utf 8 string' do
       expected = [:start_document, :start_array, [:value, 'é'], :end_array, :end_document]
-      assert_equal(expected, events("[\"\xC3\xA9\"]"))
+      assert_equal expected, events("[\"\xC3\xA9\"]")
     end
 
     it 'parses full three byte utf8 string' do
       expected = [
         :start_document,
-        :start_array,
-        [:value, "snow\u2603man"],
-        [:value, "\u2603\u2603"],
-        :end_array,
+          :start_array,
+            [:value, "snow\u2603man"],
+            [:value, "\u2603\u2603"],
+          :end_array,
         :end_document
       ]
-      assert_equal(expected, events("[\"snow\u2603man\", \"\u2603\u2603\"]"))
+      assert_equal expected, events("[\"snow\u2603man\", \"\u2603\u2603\"]")
     end
 
     it 'rejects one byte of three byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xE2"]'))
+      assert_equal expected, events('["\xE2"]')
     end
 
     it 'rejects two bytes of three byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xE2\x98"]'))
+      assert_equal expected, events('["\xE2\x98"]')
     end
 
     it 'parses full three byte utf8 string' do
       expected = [:start_document, :start_array, [:value, "\u2603"], :end_array, :end_document]
-      assert_equal(expected, events("[\"\xE2\x98\x83\"]"))
+      assert_equal expected, events("[\"\xE2\x98\x83\"]")
     end
 
     it 'parses full four byte utf8 string' do
@@ -479,34 +480,34 @@ describe JSON::Stream::Parser do
           :end_array,
         :end_document
       ]
-      assert_equal(expected, events("[\"\u{10102} check mark\"]"))
+      assert_equal expected, events("[\"\u{10102} check mark\"]")
     end
 
     it 'rejects one byte of four byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xF0"]'))
+      assert_equal expected, events('["\xF0"]')
     end
 
     it 'rejects two bytes of four byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xF0\x90"]'))
+      assert_equal expected, events('["\xF0\x90"]')
     end
 
     it 'rejects three bytes of four byte utf8 string' do
       expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events('["\xF0\x90\x84"]'))
+      assert_equal expected, events('["\xF0\x90\x84"]')
     end
 
     it 'parses full four byte utf8 string' do
       expected = [:start_document, :start_array, [:value, "\u{10102}"], :end_array, :end_document]
-      assert_equal(expected, events("[\"\xF0\x90\x84\x82\"]"))
+      assert_equal expected, events("[\"\xF0\x90\x84\x82\"]")
     end
   end
 
   it 'parses a json text from the module' do
     json = "[1,2,3]"
     obj = JSON::Stream::Parser.parse(json)
-    assert_equal([1,2,3], obj)
+    assert_equal [1,2,3], obj
   end
 
   it 'registers observers in initializer block' do
@@ -521,7 +522,7 @@ describe JSON::Stream::Parser do
     end
     parser << '{"key":12}'
     expected = [:start_document, :start_object, [:key, "key"], [:value, 12], :end_object, :end_document]
-    assert_equal(expected, events)
+    assert_equal expected, events
   end
 
   private
