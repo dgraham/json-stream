@@ -91,8 +91,24 @@ module JSON
       def initialize(&block)
         @state = :start_document
         @utf8 = Buffer.new
-        @listeners = Hash.new {|h, k| h[k] = [] }
-        @stack, @unicode, @buf, @pos = [], "", "", -1
+        @listeners = {
+          start_document: [],
+          end_document: [],
+          start_object: [],
+          end_object: [],
+          start_array: [],
+          end_array: [],
+          key: [],
+          value: []
+        }
+
+        # Track parse stack.
+        @stack = []
+        @unicode = ""
+        @buf = ""
+        @pos = -1
+
+        # Register any observers in the block.
         instance_eval(&block) if block_given?
       end
 
