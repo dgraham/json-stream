@@ -381,10 +381,10 @@ describe JSON::Stream::Parser do
 
       it 'rejects partial unicode escapes' do
         expected = [:start_document, :start_array, :error]
-        assert_equal expected, events(%q{ [" \\u "] })
-        assert_equal expected, events(%q{ [" \\u2 "]})
-        assert_equal expected, events(%q{ [" \\u26 "]})
-        assert_equal expected, events(%q{ [" \\u260 "]})
+        assert_equal expected, events('[" \\u "]')
+        assert_equal expected, events('[" \\u2 "]')
+        assert_equal expected, events('[" \\u26 "]')
+        assert_equal expected, events('[" \\u260 "]')
       end
 
       it 'parses unicode escapes' do
