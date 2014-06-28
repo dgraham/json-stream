@@ -41,7 +41,7 @@ module JSON
       def end_object
         unless @stack.size == 1
           node = @stack.pop
-          @stack[-1] << node.obj
+          @stack.last << node.obj
         end
       end
       alias :end_array :end_object
@@ -51,11 +51,11 @@ module JSON
       end
 
       def key(key)
-        @stack[-1] << key
+        @stack.last << key
       end
 
       def value(value)
-        @stack[-1] << value
+        @stack.last << value
       end
     end
 
