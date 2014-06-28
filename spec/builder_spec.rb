@@ -7,13 +7,13 @@ describe JSON::Stream::Builder do
   subject { JSON::Stream::Builder.new(JSON::Stream::Parser.new) }
 
   it 'builds an empty array' do
-    assert_nil(subject.result)
+    assert_nil subject.result
     subject.start_document
     subject.start_array
     subject.end_array
-    assert_nil(subject.result)
+    assert_nil subject.result
     subject.end_document
-    assert_equal([], subject.result)
+    assert_equal [], subject.result
   end
 
   it 'builds an array of numbers' do
@@ -24,7 +24,7 @@ describe JSON::Stream::Builder do
     subject.value(3)
     subject.end_array
     subject.end_document
-    assert_equal([1,2,3], subject.result)
+    assert_equal [1, 2, 3], subject.result
   end
 
   it 'builds nested empty arrays' do
@@ -34,7 +34,7 @@ describe JSON::Stream::Builder do
     subject.end_array
     subject.end_array
     subject.end_document
-    assert_equal([[]], subject.result)
+    assert_equal [[]], subject.result
   end
 
   it 'builds nested arrays of numbers' do
@@ -47,7 +47,7 @@ describe JSON::Stream::Builder do
     subject.value(3)
     subject.end_array
     subject.end_document
-    assert_equal([1,[2],3], subject.result)
+    assert_equal [1, [2], 3], subject.result
   end
 
   it 'builds an empty object' do
@@ -80,7 +80,7 @@ describe JSON::Stream::Builder do
       "k4" => false,
       "k5" => "string value"
     }
-    assert_equal(expected, subject.result)
+    assert_equal expected, subject.result
   end
 
   it 'builds a nested object' do
@@ -123,6 +123,6 @@ describe JSON::Stream::Builder do
       "k4"=>[1, {"sub2"=>[nil]}],
       "k5"=>"string value"
     }
-    assert_equal(expected, subject.result)
+    assert_equal expected, subject.result
   end
 end
