@@ -5,11 +5,56 @@ require 'minitest/autorun'
 
 describe JSON::Stream::Parser do
   describe 'parsing a document' do
-    it 'rejects documents containing just value tokens' do
+    it 'rejects documents containing bad start character' do
       expected = [:error]
-      ['a', 'null', 'false', 'true', '12', '  false  '].each do |json|
-        assert_equal(expected, events(json))
-      end
+      assert_equal expected, events('a')
+    end
+
+    it 'rejects documents starting with period' do
+      expected = [:error]
+      assert_equal expected, events('.')
+    end
+
+    it 'parses a null value document' do
+      skip
+      expected = [[:value, nil]]
+      assert_equal expected, events('null')
+    end
+
+    it 'parses a false value document' do
+      skip
+      expected = [[:value, false]]
+      assert_equal expected, events('false')
+    end
+
+    it 'parses a true value document' do
+      skip
+      expected = [[:value, true]]
+      assert_equal expected, events('true')
+    end
+
+    it 'parses a string document' do
+      skip
+      expected = [[:value, "test"]]
+      assert_equal expected, events('"test"')
+    end
+
+    it 'parses an integer value document' do
+      skip 'need parser#finish method'
+      expected = [[:value, 12]]
+      assert_equal(expected, events('12'))
+    end
+
+    it 'parses a float value document' do
+      skip 'need parser#finish method'
+      expected = [[:value, 12.1]]
+      assert_equal(expected, events('12.1'))
+    end
+
+    it 'parses a value document with leading whitespace' do
+      skip
+      expected = [[:value, false]]
+      assert_equal expected, events('  false  ')
     end
 
     it 'parses array documents' do
