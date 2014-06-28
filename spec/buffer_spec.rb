@@ -7,9 +7,9 @@ describe JSON::Stream::Buffer do
   subject { JSON::Stream::Buffer.new }
 
   it 'accepts single byte characters' do
-    assert_equal("", subject << "")
-    assert_equal("abc", subject << "abc")
-    assert_equal("\u0000abc", subject << "\u0000abc")
+    assert_equal "", subject << ""
+    assert_equal "abc", subject << "abc"
+    assert_equal "\u0000abc", subject << "\u0000abc"
   end
 
   # The é character can be a single codepoint \u00e9 or two codepoints
@@ -18,37 +18,37 @@ describe JSON::Stream::Buffer do
   # so neither will we. Although, a good way to normalize is by calling
   # ActiveSupport::Multibyte::Chars.new("é").normalize(:c).
   it 'accepts combined characters' do
-    assert_equal("\u0065\u0301", subject << "\u0065\u0301")
-    assert_equal(3, (subject << "\u0065\u0301").bytesize)
-    assert_equal(2, (subject << "\u0065\u0301").size)
+    assert_equal "\u0065\u0301", subject << "\u0065\u0301"
+    assert_equal 3, (subject << "\u0065\u0301").bytesize
+    assert_equal 2, (subject << "\u0065\u0301").size
 
-    assert_equal("\u00e9", subject << "\u00e9")
-    assert_equal(2, (subject << "\u00e9").bytesize)
-    assert_equal(1, (subject << "\u00e9").size)
+    assert_equal "\u00e9", subject << "\u00e9"
+    assert_equal 2, (subject << "\u00e9").bytesize
+    assert_equal 1, (subject << "\u00e9").size
   end
 
   it 'accepts valid two byte characters' do
-    assert_equal("abcé", subject << "abcé")
-    assert_equal("a", subject << "a\xC3")
-    assert_equal("é", subject << "\xA9")
-    assert_equal("", subject << "\xC3")
-    assert_equal("é", subject << "\xA9")
-    assert_equal("é", subject << "\xC3\xA9")
+    assert_equal "abcé", subject << "abcé"
+    assert_equal "a", subject << "a\xC3"
+    assert_equal "é", subject << "\xA9"
+    assert_equal "", subject << "\xC3"
+    assert_equal "é", subject << "\xA9"
+    assert_equal "é", subject << "\xC3\xA9"
   end
 
   it 'accepts valid three byte characters' do
-    assert_equal("abcé\u2603", subject << "abcé\u2603")
-    assert_equal("a", subject << "a\xE2")
-    assert_equal("", subject << "\x98")
-    assert_equal("\u2603", subject << "\x83")
+    assert_equal "abcé\u2603", subject << "abcé\u2603"
+    assert_equal "a", subject << "a\xE2"
+    assert_equal "", subject << "\x98"
+    assert_equal "\u2603", subject << "\x83"
   end
 
   it 'accepts valid four byte characters' do
-    assert_equal("abcé\u2603\u{10102}é", subject << "abcé\u2603\u{10102}é")
-    assert_equal("a", subject << "a\xF0")
-    assert_equal("", subject << "\x90")
-    assert_equal("", subject << "\x84")
-    assert_equal("\u{10102}", subject << "\x82")
+    assert_equal "abcé\u2603\u{10102}é", subject << "abcé\u2603\u{10102}é"
+    assert_equal "a", subject << "a\xF0"
+    assert_equal "", subject << "\x90"
+    assert_equal "", subject << "\x84"
+    assert_equal "\u{10102}", subject << "\x82"
   end
 
   it 'rejects invalid two byte start characters' do
