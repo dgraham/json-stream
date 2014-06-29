@@ -361,6 +361,11 @@ describe JSON::Stream::Parser do
         assert_equal expected, events('["\\u0000"]')
       end
 
+      it 'parses escaped control character in object key' do
+        expected = [:start_document, :start_object, [:key, "\u0000"], [:value, 12], :end_object, :end_document]
+        assert_equal expected, events('{"\\u0000": 12}')
+      end
+
       it 'parses non-control character' do
         # del ascii 127 is allowed unescaped in json
         expected = [:start_document, :start_array, [:value, " \u007F "], :end_array, :end_document]
