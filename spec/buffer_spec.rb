@@ -52,34 +52,34 @@ describe JSON::Stream::Buffer do
   end
 
   it 'rejects invalid two byte start characters' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xC3\xC3" }
+    -> { subject << "\xC3\xC3" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects invalid three byte start characters' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xE2\xE2" }
+    -> { subject << "\xE2\xE2" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects invalid four byte start characters' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xF0\xF0" }
+    -> { subject << "\xF0\xF0" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects a two byte start with single byte continuation character' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xC3\u0000" }
+    -> { subject << "\xC3\u0000" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects a three byte start with single byte continuation character' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xE2\u0010" }
+    -> { subject << "\xE2\u0010" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects a four byte start with single byte continuation character' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xF0a" }
+    -> { subject << "\xF0a" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects an invalid continuation character' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xA9" }
+    -> { subject << "\xA9" }.must_raise JSON::Stream::ParserError
   end
 
   it 'rejects an overlong form' do
-    assert_raises(JSON::Stream::ParserError) { subject << "\xC0\x80" }
+    -> { subject << "\xC0\x80" }.must_raise JSON::Stream::ParserError
   end
 end
