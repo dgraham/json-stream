@@ -576,12 +576,12 @@ describe JSON::Stream::Parser do
   end
 
   describe 'parsing unicode bytes' do
-    it 'parses single byte utf8' do
+    it 'parses single byte utf-8' do
       expected = [:start_document, :start_array, [:value, "test"], :end_array, :end_document]
       assert_equal expected, events('["test"]')
     end
 
-    it 'parses full two byte utf8' do
+    it 'parses full two byte utf-8' do
       expected = [
         :start_document,
           :start_array,
@@ -595,17 +595,17 @@ describe JSON::Stream::Parser do
 
     # Parser should throw an error when only one byte of a two byte character
     # is available. The \xC3 byte is the first byte of the é character.
-    it 'rejects a partial two byte utf8 string' do
+    it 'rejects a partial two byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xC3"]')
     end
 
-    it 'parses valid two byte utf 8 string' do
+    it 'parses valid two byte utf-8 string' do
       expected = [:start_document, :start_array, [:value, 'é'], :end_array, :end_document]
       assert_equal expected, events("[\"\xC3\xA9\"]")
     end
 
-    it 'parses full three byte utf8 string' do
+    it 'parses full three byte utf-8 string' do
       expected = [
         :start_document,
           :start_array,
@@ -617,22 +617,22 @@ describe JSON::Stream::Parser do
       assert_equal expected, events("[\"snow\u2603man\", \"\u2603\u2603\"]")
     end
 
-    it 'rejects one byte of three byte utf8 string' do
+    it 'rejects one byte of three byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xE2"]')
     end
 
-    it 'rejects two bytes of three byte utf8 string' do
+    it 'rejects two bytes of three byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xE2\x98"]')
     end
 
-    it 'parses full three byte utf8 string' do
+    it 'parses full three byte utf-8 string' do
       expected = [:start_document, :start_array, [:value, "\u2603"], :end_array, :end_document]
       assert_equal expected, events("[\"\xE2\x98\x83\"]")
     end
 
-    it 'parses full four byte utf8 string' do
+    it 'parses full four byte utf-8 string' do
       expected = [
         :start_document,
           :start_array,
@@ -643,22 +643,22 @@ describe JSON::Stream::Parser do
       assert_equal expected, events("[\"\u{10102} check mark\"]")
     end
 
-    it 'rejects one byte of four byte utf8 string' do
+    it 'rejects one byte of four byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xF0"]')
     end
 
-    it 'rejects two bytes of four byte utf8 string' do
+    it 'rejects two bytes of four byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xF0\x90"]')
     end
 
-    it 'rejects three bytes of four byte utf8 string' do
+    it 'rejects three bytes of four byte utf-8 string' do
       expected = [:start_document, :start_array, :error]
       assert_equal expected, events('["\xF0\x90\x84"]')
     end
 
-    it 'parses full four byte utf8 string' do
+    it 'parses full four byte utf-8 string' do
       expected = [:start_document, :start_array, [:value, "\u{10102}"], :end_array, :end_document]
       assert_equal expected, events("[\"\xF0\x90\x84\x82\"]")
     end
