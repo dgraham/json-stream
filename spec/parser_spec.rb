@@ -439,6 +439,11 @@ describe JSON::Stream::Parser do
         assert_equal expected, events('["\uDD1E\uDD1E"]')
       end
 
+      it 'rejects reversed pair' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events('["\uDD1E\uD834"]')
+      end
+
       it 'parses correct pairs in object keys and values' do
         # U+1D11E G-Clef
         clef = "\xf0\x9d\x84\x9e"
