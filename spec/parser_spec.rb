@@ -369,6 +369,13 @@ describe JSON::Stream::Parser do
     end
 
     describe 'parsing unicode escape sequences' do
+      it 'parses escaped ascii character' do
+        a = "\x61"
+        escaped = '\u0061'
+        expected = [:start_document, :start_array, [:value, a], :end_array, :end_document]
+        assert_equal expected, events('["' + escaped + '"]')
+      end
+
       it 'parses un-escaped raw unicode' do
         # U+1F602 face with tears of joy
         face = "\xf0\x9f\x98\x82"
