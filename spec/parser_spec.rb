@@ -418,22 +418,40 @@ describe JSON::Stream::Parser do
       end
     end
 
-    it 'parses unicode escapes with surrogate pairs' do
-      expected = [:start_document, :start_array, :error]
-      assert_equal(expected, events(%q{ ["\uD834"] }))
-      assert_equal(expected, events(%q{ ["\uD834\uD834"] }))
-      assert_equal(expected, events(%q{ ["\uDD1E"] }))
-      assert_equal(expected, events(%q{ ["\uDD1E\uDD1E"] }))
+    describe 'parsing unicode escapes with surrogate pairs' do
+      it 'rejects missing second pair' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events('["\uD834"]')
+      end
 
-      expected = [
-        :start_document,
-          :start_object,
-            [:key, "\u{1D11E}"],
-            [:value, "g\u{1D11E}clef"],
-          :end_object,
-        :end_document
-      ]
-      assert_equal(expected, events(%q{ {"\uD834\uDD1E": "g\uD834\uDD1Eclef"} }))
+      it 'rejects missing first pair' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events('["\uDD1E"]')
+      end
+
+      it 'rejects double first pair' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events('["\uD834\uD834"]')
+      end
+
+      it 'rejects double second pair' do
+        expected = [:start_document, :start_array, :error]
+        assert_equal expected, events('["\uDD1E\uDD1E"]')
+      end
+
+      it 'parses correct pairs in object keys and values' do
+        # U+1D11E G-Clef
+        clef = "\xf0\x9d\x84\x9e"
+        expected = [
+          :start_document,
+            :start_object,
+              [:key, clef],
+              [:value, "g\u{1D11E}clef"],
+            :end_object,
+          :end_document
+        ]
+        assert_equal expected, events(%q{ {"\uD834\uDD1E": "g\uD834\uDD1Eclef"} })
+      end
     end
   end
 
