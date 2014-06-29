@@ -109,24 +109,29 @@ describe JSON::Stream::Parser do
     it 'rejects form feed whitespace' do
       json = "[1,\f 2]"
       expected = [:start_document, :start_array, [:value, 1], :error]
-      assert_equal(expected, events(json))
+      assert_equal expected, events(json)
     end
 
     it 'rejects vertical tab whitespace' do
       json = "[1,\v 2]"
       expected = [:start_document, :start_array, [:value, 1], :error]
-      assert_equal(expected, events(json))
+      assert_equal expected, events(json)
     end
 
     it 'rejects partial keyword tokens' do
       expected = [:start_document, :start_array, :error]
-      ['[tru]', '[fal]', '[nul,true]', '[fals1]'].each do |json|
-        assert_equal expected, events(json)
-      end
+      assert_equal expected, events('[tru]')
+      assert_equal expected, events('[fal]')
+      assert_equal expected, events('[nul,true]')
+      assert_equal expected, events('[fals1]')
+    end
 
+    it 'parses single keyword tokens' do
       expected = [:start_document, :start_array, [:value, true], :end_array, :end_document]
       assert_equal expected, events('[true]')
+    end
 
+    it 'parses keywords in series' do
       expected = [:start_document, :start_array, [:value, true], [:value, nil], :end_array, :end_document]
       assert_equal expected, events('[true, null]')
     end
