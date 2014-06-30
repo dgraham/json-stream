@@ -714,10 +714,66 @@ describe JSON::Stream::Parser do
     end
   end
 
-  it 'parses a json text from the module' do
-    json = "[1,2,3]"
-    obj = JSON::Stream::Parser.parse(json)
-    assert_equal [1,2,3], obj
+  describe 'parsing json text from the module' do
+    it 'parses an array document' do
+      result = JSON::Stream::Parser.parse('[1,2,3]')
+      assert_equal [1, 2, 3], result
+    end
+
+    it 'parses a true keyword literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('true')
+      assert_equal true, result
+    end
+
+    it 'parses a false keyword literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('false')
+      assert_equal false, result
+    end
+
+    it 'parses a null keyword literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('null')
+      assert_equal nil, result
+    end
+
+    it 'parses a string literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('"hello"')
+      assert_equal 'hello', result
+    end
+
+    it 'parses an integer literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('42')
+      assert_equal 42, result
+    end
+
+    it 'parses a float literal document' do
+      skip
+      result = JSON::Stream::Parser.parse('42.12')
+      assert_equal 42.12, result
+    end
+
+    it 'rejects a partial float literal document' do
+      skip
+      assert_raises(JSON::Stream::ParserError) do
+        JSON::Stream::Parser.parse('42.')
+      end
+    end
+
+    it 'rejects a partial document' do
+      assert_raises(JSON::Stream::ParserError) do
+        JSON::Stream::Parser.parse('{')
+      end
+    end
+
+    it 'rejects an empty document' do
+      assert_raises(JSON::Stream::ParserError) do
+        JSON::Stream::Parser.parse('')
+      end
+    end
   end
 
   it 'registers observers in initializer block' do
