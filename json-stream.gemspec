@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.test_files   = Dir['spec/**/*']
   s.require_path = 'lib'
 
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rake', '~> 10.3'
   s.required_ruby_version = '>= 1.9.2'
 end
