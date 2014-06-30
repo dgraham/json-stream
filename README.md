@@ -65,14 +65,14 @@ def receive_data(data)
 end
 ```
 
-Notice how the parser accepts chunks of the JSON document and parses up
-to the end of the available buffer. Passing in more data resumes the
-parse from the prior state. When an interesting state change happens, the
-parser notifies all registered callback procs of the event.
+The parser accepts chunks of the JSON document and parses up to the end of the
+available buffer. Passing in more data resumes the parse from the prior state.
+When an interesting state change happens, the parser notifies all registered
+callback procs of the event.
 
 The event callback is where we can do interesting data filtering and passing
 to other processes. The above example simply prints state changes, but
-imagine the callbacks looking for an array named "rows" and processing sets
+imagine the callbacks looking for an array named `rows` and processing sets
 of these row objects in small batches. Millions of rows, streaming over the
 network, can be processed in constant memory space this way.
 
@@ -80,10 +80,8 @@ network, can be processed in constant memory space this way.
 
 * ruby >= 1.9.2
 
-## Contact
 
-Project contact: David Graham <david.malcom.graham@gmail.com>
 
 ## License
 
-JSON::Stream is released under the MIT license.  Check the LICENSE file for details.
+JSON::Stream is released under the MIT license. Check the LICENSE file for details.
