@@ -145,6 +145,48 @@ describe JSON::Stream::Parser do
     end
   end
 
+  describe 'finishing the parse' do
+    it 'rejects finish with no json data provided' do
+      skip
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial null keyword' do
+      skip
+      subject << 'nul'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial true keyword' do
+      skip
+      subject << 'tru'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial false keyword' do
+      skip
+      subject << 'fals'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial float literal' do
+      skip
+      subject << '42.'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'does nothing on subsequent finish' do
+      skip
+      begin
+        subject << 'false'
+        subject.finish
+        subject.finish
+      rescue
+        fail 'raised unexpected error'
+      end
+    end
+  end
+
   describe 'parsing number tokens' do
     it 'rejects invalid negative numbers' do
       expected = [:start_document, :start_array, :error]
