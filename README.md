@@ -79,6 +79,7 @@ network, can be processed in constant memory space this way.
 ## Dependencies
 
 * ruby >= 1.9.2
+* jruby >= 1.7
 
 
 
