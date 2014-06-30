@@ -81,7 +81,11 @@ network, can be processed in constant memory space this way.
 * ruby >= 1.9.2
 * jruby >= 1.7
 
+## Alternatives
 
+* [json](https://github.com/flori/json)
+* [yajl-ruby](https://github.com/brianmario/yajl-ruby)
+* [yajl-ffi](https://github.com/dgraham/yajl-ffi)
 
 ## License
 
