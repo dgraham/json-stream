@@ -30,24 +30,24 @@ module JSON
       # Returns a UTF-8 encoded String.
       def <<(data)
         bytes = []
-        data.bytes.each do |b|
+        data.bytes.each do |byte|
           case @state
           when :start
-            if b < 128
-              bytes << b
-            elsif b >= 192
+            if byte < 128
+              bytes << byte
+            elsif byte >= 192
               @state = :multi_byte
-              @buf << b
+              @buf << byte
               @need = case
-                when b >= 240 then 4
-                when b >= 224 then 3
-                when b >= 192 then 2 end
+                when byte >= 240 then 4
+                when byte >= 224 then 3
+                when byte >= 192 then 2 end
             else
               error('Expected start of multi-byte or single byte char')
             end
           when :multi_byte
-            if b > 127 && b < 192
-              @buf << b
+            if byte > 127 && byte < 192
+              @buf << byte
               if @buf.size == @need
                 bytes += @buf.slice!(0, @buf.size)
                 @state = :start
