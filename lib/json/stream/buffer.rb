@@ -38,10 +38,12 @@ module JSON
             elsif byte >= 192
               @state = :multi_byte
               @buf << byte
-              @need = case
+              @need =
+                case
                 when byte >= 240 then 4
                 when byte >= 224 then 3
-                when byte >= 192 then 2 end
+                when byte >= 192 then 2
+                end
             else
               error('Expected start of multi-byte or single byte char')
             end
