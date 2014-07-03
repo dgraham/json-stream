@@ -30,7 +30,7 @@ module JSON
       # Returns a UTF-8 encoded String.
       def <<(data)
         bytes = []
-        data.bytes.each do |byte|
+        data.each_byte do |byte|
           case @state
           when :start
             if byte < 128
