@@ -82,4 +82,22 @@ describe JSON::Stream::Buffer do
   it 'rejects an overlong form' do
     -> { subject << "\xC0\x80" }.must_raise JSON::Stream::ParserError
   end
+
+  describe 'checking for empty buffers' do
+    it 'is initially empty' do
+      assert subject.empty?
+    end
+
+    it 'is empty after processing complete characters' do
+      subject << 'test'
+      assert subject.empty?
+    end
+
+    it 'is not empty after processing partial multi-byte characters' do
+      subject << "\xC3"
+      refute subject.empty?
+      subject << "\xA9"
+      assert subject.empty?
+    end
+  end
 end

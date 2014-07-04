@@ -64,6 +64,27 @@ module JSON
         end
       end
 
+      # Determine if the buffer contains partial UTF-8 continuation bytes that
+      # are waiting on subsequent completion bytes before a full codepoint is
+      # formed.
+      #
+      # Examples
+      #
+      #   bytes = "é".bytes
+      #
+      #   buffer << bytes[0]
+      #   buffer.empty?
+      #   # => false
+      #
+      #   buffer << bytes[1]
+      #   buffer.empty?
+      #   # => true
+      #
+      # Returns true if the buffer is empty.
+      def empty?
+        @buf.empty?
+      end
+
       private
 
       def error(message)
