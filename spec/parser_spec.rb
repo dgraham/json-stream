@@ -274,6 +274,17 @@ describe JSON::Stream::Parser do
       assert_equal expected, events('[12.]')
     end
 
+    it 'parses zero with positive exponent as float' do
+      expected = [:start_document, :start_array, [:value, 0.0], :end_array, :end_document]
+      assert_equal expected, events('[0e2]')
+      assert_equal expected, events('[0e+2]')
+    end
+
+    it 'parses zero with negative exponent as float' do
+      expected = [:start_document, :start_array, [:value, 0.0], :end_array, :end_document]
+      assert_equal expected, events('[0e-2]')
+    end
+
     it 'parses positive exponent integers' do
       expected = [:start_document, :start_array, [:value, 212], :end_array, :end_document]
       assert_equal expected, events('[2.12e2]')
