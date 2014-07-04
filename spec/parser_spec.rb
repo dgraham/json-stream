@@ -295,9 +295,13 @@ describe JSON::Stream::Parser do
       assert_kind_of Float, events[2][1]
     end
 
-    it 'parses positive exponent integers' do
-      expected = [:start_document, :start_array, [:value, 212], :end_array, :end_document]
+    it 'parses positive exponent integers as floats' do
+      expected = [:start_document, :start_array, [:value, 212.0], :end_array, :end_document]
+
+      events = events('[2.12e2]')
       assert_equal expected, events('[2.12e2]')
+      assert_kind_of Float, events[2][1]
+
       assert_equal expected, events('[2.12e02]')
       assert_equal expected, events('[2.12e+2]')
       assert_equal expected, events('[2.12e+02]')
