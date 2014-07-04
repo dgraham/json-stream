@@ -67,7 +67,7 @@ module JSON
         while (buf = stream.read(BUF_SIZE)) != nil
           parser << buf
         end
-        raise ParserError, "unexpected eof" unless builder.result
+        raise ParserError, 'Unexpected end-of-file' unless builder.result
         builder.result
       ensure
         stream.close
@@ -172,7 +172,7 @@ module JSON
             when WS
               # ignore
             else
-              error("Expected object or array start")
+              error('Expected object or array start')
             end
           when :start_object
             case ch
@@ -184,7 +184,7 @@ module JSON
             when WS
               # ignore
             else
-              error("Expected object key start")
+              error('Expected object key start')
             end
           when :start_string
             case ch
@@ -227,7 +227,7 @@ module JSON
             when U
               @state = :unicode_escape
             else
-              error("Expected escaped character")
+              error('Expected escaped character')
             end
           when :unicode_escape
             case ch
@@ -366,7 +366,7 @@ module JSON
             when WS
               # ignore
             else
-              error("Expected colon key separator")
+              error('Expected colon key separator')
             end
           when :key_sep
             start_value(ch)
@@ -390,7 +390,7 @@ module JSON
             when WS
               # ignore
             else
-              error("Expected comma or object or array close")
+              error('Expected comma or object or array close')
             end
           when :value_sep
             if @stack.last == :object
@@ -401,13 +401,13 @@ module JSON
               when WS
                 # ignore
               else
-                error("Expected object key start")
+                error('Expected object key start')
               end
             else
               start_value(ch)
             end
           when :end_document
-            error("Unexpected data") unless ch =~ WS
+            error('Unexpected data') unless ch =~ WS
           end
         end
       end
@@ -501,7 +501,7 @@ module JSON
         when WS
           # ignore
         else
-          error("Expected value")
+          error('Expected value')
         end
       end
 
