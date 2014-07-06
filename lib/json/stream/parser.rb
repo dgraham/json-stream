@@ -67,10 +67,50 @@ module JSON
         while (buf = stream.read(BUF_SIZE)) != nil
           parser << buf
         end
-        raise ParserError, 'Unexpected end-of-file' unless builder.result
+        parser.finish
         builder.result
       ensure
         stream.close
+      end
+
+      # Drain any remaining buffered characters into the parser to complete
+      # the parsing of the document.
+      #
+      # This is only required when parsing a document containing a single
+      # numeric value, integer or float. The parser has no other way to
+      # detect when it should no longer expect additional characters with
+      # which to complete the parse, so it must be signaled by a call to
+      # this method.
+      #
+      # If you're parsing more typical object or array documents, there's no
+      # need to call `finish` because the parse will complete when the final
+      # closing `]` or `}` character is scanned.
+      #
+      # Raises a JSON::Stream::ParserError if the JSON data is malformed.
+      #
+      # Returns nothing.
+      def finish
+        # Partial multi-byte character waiting for completion bytes.
+        error('Unexpected end-of-file') unless @utf8.empty?
+
+        # Partial array, object, or string.
+        error('Unexpected end-of-file') unless @stack.empty?
+
+        case @state
+        when :end_document
+          # done, do nothing
+        when :in_float
+          end_value(@buf.to_f)
+        when :in_exponent
+          error('Unexpected end-of-file') unless @buf =~ DIGIT_END
+          end_value(@buf.to_f)
+        when :start_zero
+          end_value(@buf.to_i)
+        when :start_int
+          end_value(@buf.to_i)
+        else
+          error('Unexpected end-of-file')
+        end
       end
 
       # Create a new parser with an optional initialization block where
