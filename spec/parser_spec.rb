@@ -210,6 +210,11 @@ describe JSON::Stream::Parser do
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
+    it 'rejects partial string literal' do
+      subject << '"test'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
     it 'does nothing on subsequent finish' do
       begin
         subject << 'false'
