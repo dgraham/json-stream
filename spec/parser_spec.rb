@@ -215,6 +215,16 @@ describe JSON::Stream::Parser do
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
+    it 'rejects partial object ending in literal value' do
+      subject << '{"test": 42'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial array ending in literal value' do
+      subject << '[42'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
     it 'does nothing on subsequent finish' do
       begin
         subject << 'false'
