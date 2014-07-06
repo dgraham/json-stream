@@ -190,8 +190,7 @@ module JSON
             case ch
             when QUOTE
               if @stack.pop == :string
-                @state = :end_value
-                notify(:value, @buf)
+                end_value(@buf)
               else # :key
                 @state = :end_key
                 notify(:key, @buf)
@@ -287,8 +286,7 @@ module JSON
               @state = :start_exponent
               @buf << ch
             else
-              @state = :end_value
-              notify(:value, @buf.to_i)
+              end_value(@buf.to_i)
               @buf = ""
               @pos -= 1
               redo
@@ -309,8 +307,7 @@ module JSON
               @state = :start_exponent
               @buf << ch
             else
-              @state = :end_value
-              notify(:value, @buf.to_f)
+              end_value(@buf.to_f)
               @buf = ""
               @pos -= 1
               redo
@@ -329,8 +326,7 @@ module JSON
               @buf << ch
             else
               error('Expected 0-9 digit') unless @buf =~ DIGIT_END
-              @state = :end_value
-              notify(:value, @buf.to_f)
+              end_value(@buf.to_f)
               @buf = ""
               @pos -= 1
               redo
@@ -346,8 +342,7 @@ module JSON
               @state = :start_exponent
               @buf << ch
             else
-              @state = :end_value
-              notify(:value, @buf.to_i)
+              end_value(@buf.to_i)
               @buf = ""
               @pos -= 1
               redo
@@ -465,9 +460,8 @@ module JSON
         end
         if @buf.size == word.size
           if @buf == word
-            @state = :end_value
             @buf = ""
-            notify(:value, value)
+            end_value(value)
           else
             error("Expected #{word} keyword")
           end
@@ -510,6 +504,17 @@ module JSON
         else
           error('Expected value')
         end
+      end
+
+      # Advance the state machine and notify `value` observers that a
+      # string, number or keyword (true, false, null) value was parsed.
+      #
+      # value - The object to broadcast to observers.
+      #
+      # Returns nothing.
+      def end_value(value)
+        @state = :end_value
+        notify(:value, value)
       end
 
       def error(message)
