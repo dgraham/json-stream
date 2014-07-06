@@ -159,6 +159,13 @@ describe JSON::Stream::Parser do
       assert_equal expected, events('[fals1]')
     end
 
+    it 'rejects scrambled keyword tokens' do
+      expected = [:start_document, :start_array, :error]
+      assert_equal expected, events('[ture]')
+      assert_equal expected, events('[fales]')
+      assert_equal expected, events('[nlul]')
+    end
+
     it 'parses single keyword tokens' do
       expected = [:start_document, :start_array, [:value, true], :end_array, :end_document]
       assert_equal expected, events('[true]')
