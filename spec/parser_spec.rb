@@ -18,31 +18,26 @@ describe JSON::Stream::Parser do
     end
 
     it 'parses a null value document' do
-      skip
       expected = [:start_document, [:value, nil], :end_document]
       assert_equal expected, events('null')
     end
 
     it 'parses a false value document' do
-      skip
       expected = [:start_document, [:value, false], :end_document]
       assert_equal expected, events('false')
     end
 
     it 'parses a true value document' do
-      skip
       expected = [:start_document, [:value, true], :end_document]
       assert_equal expected, events('true')
     end
 
     it 'parses a string document' do
-      skip
       expected = [:start_document, [:value, "test"], :end_document]
       assert_equal expected, events('"test"')
     end
 
     it 'parses an integer value document' do
-      skip
       expected = [:start_document, [:value, 12], :end_document]
       events = events('12', subject)
       assert events.empty?
@@ -51,7 +46,6 @@ describe JSON::Stream::Parser do
     end
 
     it 'parses a float value document' do
-      skip
       expected = [:start_document, [:value, 12.1], :end_document]
       events = events('12.1', subject)
       assert events.empty?
@@ -60,7 +54,6 @@ describe JSON::Stream::Parser do
     end
 
     it 'parses a value document with leading whitespace' do
-      skip
       expected = [:start_document, [:value, false], :end_document]
       assert_equal expected, events('  false  ')
     end
@@ -147,36 +140,30 @@ describe JSON::Stream::Parser do
 
   describe 'finishing the parse' do
     it 'rejects finish with no json data provided' do
-      skip
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
     it 'rejects partial null keyword' do
-      skip
       subject << 'nul'
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
     it 'rejects partial true keyword' do
-      skip
       subject << 'tru'
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
     it 'rejects partial false keyword' do
-      skip
       subject << 'fals'
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
     it 'rejects partial float literal' do
-      skip
       subject << '42.'
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
     it 'does nothing on subsequent finish' do
-      skip
       begin
         subject << 'false'
         subject.finish
@@ -746,43 +733,36 @@ describe JSON::Stream::Parser do
     end
 
     it 'parses a true keyword literal document' do
-      skip
       result = JSON::Stream::Parser.parse('true')
       assert_equal true, result
     end
 
     it 'parses a false keyword literal document' do
-      skip
       result = JSON::Stream::Parser.parse('false')
       assert_equal false, result
     end
 
     it 'parses a null keyword literal document' do
-      skip
       result = JSON::Stream::Parser.parse('null')
       assert_equal nil, result
     end
 
     it 'parses a string literal document' do
-      skip
       result = JSON::Stream::Parser.parse('"hello"')
       assert_equal 'hello', result
     end
 
     it 'parses an integer literal document' do
-      skip
       result = JSON::Stream::Parser.parse('42')
       assert_equal 42, result
     end
 
     it 'parses a float literal document' do
-      skip
       result = JSON::Stream::Parser.parse('42.12')
       assert_equal 42.12, result
     end
 
     it 'rejects a partial float literal document' do
-      skip
       assert_raises(JSON::Stream::ParserError) do
         JSON::Stream::Parser.parse('42.')
       end
