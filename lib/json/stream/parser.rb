@@ -443,10 +443,18 @@ module JSON
         else
           error("Expected end of #{type}")
         end
-        if @stack.empty?
-          @state = :end_document
-          notify(:end_document)
-        end
+        notify_end_document if @stack.empty?
+      end
+
+      # Broadcast an `end_document` event to observers after a complete JSON
+      # value document (object, array, number, string, true, false, null) has
+      # been parsed from the text. This is the final event sent to observers
+      # and signals the parse has finished.
+      #
+      # Returns nothing.
+      def notify_end_document
+        @state = :end_document
+        notify(:end_document)
       end
 
       def keyword(word, value, re, ch)
