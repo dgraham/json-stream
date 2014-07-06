@@ -827,7 +827,7 @@ describe JSON::Stream::Parser do
   #
   # Returns an Events instance.
   def events(json, parser = nil)
-    parser = JSON::Stream::Parser.new
+    parser ||= JSON::Stream::Parser.new
     collector = Events.new(parser)
     begin
       json.each_byte {|byte| parser << [byte].pack('C') }
