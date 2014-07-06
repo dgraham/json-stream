@@ -44,7 +44,6 @@ module JSON
       PLUS          = '+'
       POINT         = '.'
       EXPONENT      = /[eE]/
-      FLOAT         = /[\.eE]/
       B,F,N,R,T,U   = %w[b f n r t u]
 
       # Parses a full JSON document from a String or an IO stream and returns
@@ -331,8 +330,7 @@ module JSON
             else
               error('Expected 0-9 digit') unless @buf =~ DIGIT_END
               @state = :end_value
-              number = (@buf =~ FLOAT) ? @buf.to_f : @buf.to_i
-              notify(:value, number)
+              notify(:value, @buf.to_f)
               @buf = ""
               @pos -= 1
               redo
