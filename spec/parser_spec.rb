@@ -37,9 +37,41 @@ describe JSON::Stream::Parser do
       assert_equal expected, events('"test"')
     end
 
-    it 'parses an integer value document' do
+    it 'parses a single digit integer value document' do
+      expected = [:start_document, [:value, 2], :end_document]
+      events = events('2', subject)
+      assert events.empty?
+      subject.finish
+      assert_equal expected, events
+    end
+
+    it 'parses a multiple digit integer value document' do
       expected = [:start_document, [:value, 12], :end_document]
       events = events('12', subject)
+      assert events.empty?
+      subject.finish
+      assert_equal expected, events
+    end
+
+    it 'parses a zero literal document' do
+      expected = [:start_document, [:value, 0], :end_document]
+      events = events('0', subject)
+      assert events.empty?
+      subject.finish
+      assert_equal expected, events
+    end
+
+    it 'parses a negative integer document' do
+      expected = [:start_document, [:value, -1], :end_document]
+      events = events('-1', subject)
+      assert events.empty?
+      subject.finish
+      assert_equal expected, events
+    end
+
+    it 'parses an exponent literal document' do
+      expected = [:start_document, [:value, 200.0], :end_document]
+      events = events('2e2', subject)
       assert events.empty?
       subject.finish
       assert_equal expected, events
@@ -160,6 +192,21 @@ describe JSON::Stream::Parser do
 
     it 'rejects partial float literal' do
       subject << '42.'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial exponent' do
+      subject << '42e'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects malformed exponent' do
+      subject << '42e+'
+      -> { subject.finish }.must_raise JSON::Stream::ParserError
+    end
+
+    it 'rejects partial negative number' do
+      subject << '-'
       -> { subject.finish }.must_raise JSON::Stream::ParserError
     end
 
