@@ -453,6 +453,14 @@ module JSON
         end
       end
 
+      # Complete an object or array container value type.
+      #
+      # type - The Symbol, :object or :array, of the expected type.
+      #
+      # Raises a JSON::Stream::ParserError if the expected container type
+      #   was not completed.
+      #
+      # Returns nothing.
       def end_container(type)
         @state = :end_value
         if @stack.pop == type
@@ -477,12 +485,24 @@ module JSON
         notify(:end_document)
       end
 
+      # Parse one of the three allowed keywords: true, false, null.
+      #
+      # word  - The String keyword ('true', 'false', 'null').
+      # value - The Ruby value (true, false, nil).
+      # re    - The Regexp of allowed keyword characters.
+      # ch    - The current String character being parsed.
+      #
+      # Raises a JSON::Stream::ParserError if the character does not belong
+      #   in the expected keyword.
+      #
+      # Returns nothing.
       def keyword(word, value, re, ch)
         if ch =~ re
           @buf << ch
         else
           error("Expected #{word} keyword")
         end
+
         if @buf.size == word.size
           if @buf == word
             @buf = ""
@@ -493,6 +513,15 @@ module JSON
         end
       end
 
+      # Process the first character of one of the seven possible JSON
+      # values: object, array, string, true, false, null, number.
+      #
+      # ch - The current character String.
+      #
+      # Raises a JSON::Stream::ParserError if the character does not signal
+      #   the start of a value.
+      #
+      # Returns nothing.
       def start_value(ch)
         case ch
         when LEFT_BRACE
