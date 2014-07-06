@@ -158,22 +158,7 @@ module JSON
           @pos += 1
           case @state
           when :start_document
-            case ch
-            when LEFT_BRACE
-              @state = :start_object
-              @stack.push(:object)
-              notify(:start_document)
-              notify(:start_object)
-            when LEFT_BRACKET
-              @state = :start_array
-              @stack.push(:array)
-              notify(:start_document)
-              notify(:start_array)
-            when WS
-              # ignore
-            else
-              error('Expected object or array start')
-            end
+            start_value(ch)
           when :start_object
             case ch
             when RIGHT_BRACE
@@ -471,10 +456,12 @@ module JSON
       def start_value(ch)
         case ch
         when LEFT_BRACE
+          notify(:start_document) if @stack.empty?
           @state = :start_object
           @stack.push(:object)
           notify(:start_object)
         when LEFT_BRACKET
+          notify(:start_document) if @stack.empty?
           @state = :start_array
           @stack.push(:array)
           notify(:start_array)
@@ -514,7 +501,9 @@ module JSON
       # Returns nothing.
       def end_value(value)
         @state = :end_value
+        notify(:start_document) if @stack.empty?
         notify(:value, value)
+        notify_end_document if @stack.empty?
       end
 
       def error(message)
