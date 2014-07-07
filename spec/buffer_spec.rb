@@ -51,6 +51,13 @@ describe JSON::Stream::Buffer do
     assert_equal "\u{10102}", subject << "\x82"
   end
 
+  it 'rejects valid utf-8 followed by partial two byte sequence' do
+    assert_equal '[', subject << '['
+    assert_equal '"', subject << '"'
+    assert_equal '', subject << "\xC3"
+    -> { subject << '"' }.must_raise JSON::Stream::ParserError
+  end
+
   it 'rejects invalid two byte start characters' do
     -> { subject << "\xC3\xC3" }.must_raise JSON::Stream::ParserError
   end
