@@ -14,7 +14,7 @@ module JSON
     class Buffer
       def initialize
         @state = :start
-        @buf = []
+        @buffer = []
         @need = 0
       end
 
@@ -30,7 +30,7 @@ module JSON
       # Returns a UTF-8 encoded String.
       def <<(data)
         # Avoid state machine for complete UTF-8.
-        if @buf.empty?
+        if @buffer.empty?
           data.force_encoding(Encoding::UTF_8)
           return data if data.valid_encoding?
         end
@@ -43,7 +43,7 @@ module JSON
               bytes << byte
             elsif byte >= 192
               @state = :multi_byte
-              @buf << byte
+              @buffer << byte
               @need =
                 case
                 when byte >= 240 then 4
@@ -55,9 +55,9 @@ module JSON
             end
           when :multi_byte
             if byte > 127 && byte < 192
-              @buf << byte
-              if @buf.size == @need
-                bytes += @buf.slice!(0, @buf.size)
+              @buffer << byte
+              if @buffer.size == @need
+                bytes += @buffer.slice!(0, @buffer.size)
                 @state = :start
               end
             else
@@ -90,7 +90,7 @@ module JSON
       #
       # Returns true if the buffer is empty.
       def empty?
-        @buf.empty?
+        @buffer.empty?
       end
 
       private
