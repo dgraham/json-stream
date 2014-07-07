@@ -260,7 +260,7 @@ module JSON
               if @unicode.size == 4
                 codepoint = @unicode.slice!(0, 4).hex
                 if codepoint >= 0xD800 && codepoint <= 0xDBFF
-                  error('Expected low surrogate pair half') if @stack.last.is_a?(Fixnum)
+                  error('Expected low surrogate pair half') if @stack[-1].is_a?(Fixnum)
                   @state = :start_surrogate_pair
                   @stack.push(codepoint)
                 elsif codepoint >= 0xDC00 && codepoint <= 0xDFFF
@@ -412,7 +412,7 @@ module JSON
               error('Expected comma or object or array close')
             end
           when :value_sep
-            if @stack.last == :object
+            if @stack[-1] == :object
               case ch
               when QUOTE
                 @state = :start_string
