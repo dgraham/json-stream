@@ -161,11 +161,11 @@ module JSON
             start_value(ch)
           when :start_object
             case ch
-            when RIGHT_BRACE
-              end_container(:object)
             when QUOTE
               @state = :start_string
               @stack.push(:key)
+            when RIGHT_BRACE
+              end_container(:object)
             when WS
               # ignore
             else
