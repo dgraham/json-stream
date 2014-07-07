@@ -362,10 +362,10 @@ module JSON
             case ch
             when COMMA
               @state = :value_sep
-            when RIGHT_BRACKET
-              end_container(:array)
             when RIGHT_BRACE
               end_container(:object)
+            when RIGHT_BRACKET
+              end_container(:array)
             when WS
               # ignore
             else
