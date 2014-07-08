@@ -2,9 +2,10 @@
 
 JSON::Stream is a JSON parser, based on a finite state machine, that generates
 events for each state change. This allows streaming both the JSON document into
-memory and the parsed object graph out of memory to some other process. This
-is much like an XML SAX parser that generates events during parsing. There is
-no requirement for the document, or the object graph, to be fully buffered in
+memory and the parsed object graph out of memory to some other process.
+
+This is much like an XML SAX parser that generates events during parsing. There
+is no requirement for the document, or the object graph, to be fully buffered in
 memory. This is best suited for huge JSON documents that won't fit in memory.
 For example, streaming and processing large map/reduce views from Apache
 CouchDB.
