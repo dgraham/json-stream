@@ -220,12 +220,12 @@ module JSON
               if @unicode.size == 4
                 codepoint = @unicode.slice!(0, 4).hex
                 if codepoint >= 0xD800 && codepoint <= 0xDBFF
-                  error('Expected low surrogate pair half') if @stack[-1].is_a?(Fixnum)
+                  error('Expected low surrogate pair half') if @stack[-1].is_a?(Integer)
                   @state = :start_surrogate_pair
                   @stack.push(codepoint)
                 elsif codepoint >= 0xDC00 && codepoint <= 0xDFFF
                   high = @stack.pop
-                  error('Expected high surrogate pair half') unless high.is_a?(Fixnum)
+                  error('Expected high surrogate pair half') unless high.is_a?(Integer)
                   pair = ((high - 0xD800) * 0x400) + (codepoint - 0xDC00) + 0x10000
                   @buf << pair
                   @state = :start_string
