@@ -89,6 +89,13 @@ network, can be processed in constant memory space this way.
 * [yajl-ffi](https://github.com/dgraham/yajl-ffi)
 * [application/json-seq](http://www.rfc-editor.org/rfc/rfc7464.txt)
 
+## Development
+
+```
+$ bin/setup
+$ bin/rake test
+```
+
 ## License
 
 JSON::Stream is released under the MIT license. Check the LICENSE file for details.
