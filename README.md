@@ -87,6 +87,7 @@ network, can be processed in constant memory space this way.
 * [json](https://github.com/flori/json)
 * [yajl-ruby](https://github.com/brianmario/yajl-ruby)
 * [yajl-ffi](https://github.com/dgraham/yajl-ffi)
+* [application/json-seq](http://www.rfc-editor.org/rfc/rfc7464.txt)
 
 ## License
 
