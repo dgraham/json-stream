@@ -813,7 +813,7 @@ describe JSON::Stream::Parser do
 
     it 'parses a null keyword literal document' do
       result = JSON::Stream::Parser.parse('null')
-      assert_equal nil, result
+      assert_nil result
     end
 
     it 'parses a string literal document' do
