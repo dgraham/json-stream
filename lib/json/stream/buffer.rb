@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module JSON
   module Stream
     # A character buffer that expects a UTF-8 encoded stream of bytes.

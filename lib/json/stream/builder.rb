@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module JSON
   module Stream
     # A parser listener that builds a full, in memory, object from a JSON

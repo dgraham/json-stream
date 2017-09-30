@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module JSON
   module Stream
     # Raised on any invalid JSON text.
