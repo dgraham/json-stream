@@ -10,4 +10,3 @@ before_install:
 
 script: bundle exec rake test
 cache: bundler
-dist: trusty
