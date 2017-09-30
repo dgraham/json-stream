@@ -12,8 +12,8 @@ module JSON
     # Examples
     #
     #   parser = JSON::Stream::Parser.new
-    #   parser.key {|key| puts key }
-    #   parser.value {|value| puts value }
+    #   parser.key { |key| puts key }
+    #   parser.value { |value| puts value }
     #   parser << '{"answer":'
     #   parser << ' 42}'
     class Parser
@@ -85,8 +85,8 @@ module JSON
       #     end_object     { puts "end object" }
       #     start_array    { puts "start array" }
       #     end_array      { puts "end array" }
-      #     key            {|k| puts "key: #{k}" }
-      #     value          {|v| puts "value: #{v}" }
+      #     key            { |k| puts "key: #{k}" }
+      #     value          { |v| puts "value: #{v}" }
       #   end
       def initialize(&block)
         @state = :start_document

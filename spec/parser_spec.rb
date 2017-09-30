@@ -857,8 +857,8 @@ describe JSON::Stream::Parser do
       end_document   { events << :end_document }
       start_object   { events << :start_object }
       end_object     { events << :end_object }
-      key            {|k| events << [:key, k] }
-      value          {|v| events << [:value, v] }
+      key            { |k| events << [:key, k] }
+      value          { |v| events << [:value, v] }
     end
     parser << '{"key":12}'
     expected = [:start_document, :start_object, [:key, "key"], [:value, 12], :end_object, :end_document]
@@ -879,7 +879,7 @@ describe JSON::Stream::Parser do
     parser ||= JSON::Stream::Parser.new
     collector = Events.new(parser)
     begin
-      json.each_byte {|byte| parser << [byte].pack('C') }
+      json.each_byte { |byte| parser << [byte].pack('C') }
     rescue JSON::Stream::ParserError
       collector.error
     end

@@ -40,7 +40,7 @@ Again, while JSON::Stream can be used this way, if we just need to stream the
 document from disk or the network, we're better off using the yajl-ruby gem.
 
 Huge documents arriving over the network in small chunks to an EventMachine
-receive_data loop is where JSON::Stream is really useful. Inside an
+`receive_data` loop is where JSON::Stream is really useful. Inside an
 EventMachine::Connection subclass we might have:
 
 ```ruby
@@ -52,8 +52,8 @@ def post_init
     end_object     { puts "end object" }
     start_array    { puts "start array" }
     end_array      { puts "end array" }
-    key            {|k| puts "key: #{k}" }
-    value          {|v| puts "value: #{v}" }
+    key            { |k| puts "key: #{k}" }
+    value          { |v| puts "value: #{v}" }
   end
 end
 
@@ -76,11 +76,6 @@ to other processes. The above example simply prints state changes, but
 imagine the callbacks looking for an array named `rows` and processing sets
 of these row objects in small batches. Millions of rows, streaming over the
 network, can be processed in constant memory space this way.
-
-## Dependencies
-
-* ruby >= 1.9.2
-* jruby >= 1.7
 
 ## Alternatives
 
