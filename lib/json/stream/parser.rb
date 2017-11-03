@@ -71,6 +71,19 @@ module JSON
         stream.close
       end
 
+      # Add this instance method
+      def parse(json)
+        stream = json.is_a?(String) ? StringIO.new(json) : json
+        builder = Builder.new(self)
+        while (buf = stream.read(BUF_SIZE)) != nil
+          self << buf
+        end
+        self.finish
+        builder.result
+      ensure
+        stream.close
+      end
+
       # Create a new parser with an optional initialization block where
       # we can register event callbacks.
       #
