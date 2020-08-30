@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files        = Dir['[A-Z]*', 'json-stream.gemspec', '{lib}/**/*'] - ['Gemfile.lock']
   s.require_path = 'lib'
 
-  s.add_development_dependency 'bundler', '~> 1.15'
+  s.add_development_dependency 'bundler', '~> 2.1'
   s.add_development_dependency 'minitest', '~> 5.10'
   s.add_development_dependency 'rake', '~> 12.1'
 
