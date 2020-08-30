@@ -11,4 +11,5 @@ jobs:
           ruby-version: '2.6'
       - run: |
           gem install bundler --no-document
+          bundle install
           bundle exec rake test
